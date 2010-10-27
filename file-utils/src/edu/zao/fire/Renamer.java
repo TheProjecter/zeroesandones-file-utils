@@ -108,6 +108,7 @@ public class Renamer {
 	 */
 	public void applyChanges() {
 		// TODO: add a naming conflict check
+		currentRule.setup();
 		for (File file : localFiles) {
 			try {
 				// TODO: cause actual changes to happen
@@ -120,6 +121,7 @@ public class Renamer {
 				throwError(ErrorType.IOException, file, currentRule);
 			}
 		}
+		currentRule.tearDown();
 	}
 
 	/**
@@ -130,6 +132,9 @@ public class Renamer {
 	 *            The directory to set as the current directory
 	 */
 	public void setCurrentDirectory(File directory) {
+		if (directory == null) {
+			return;
+		}
 		if (!directory.isDirectory()) {
 			throw new IllegalArgumentException("The given 'directory' MUST be a directory.");
 		}
