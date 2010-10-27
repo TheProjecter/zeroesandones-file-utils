@@ -22,7 +22,9 @@ public class TestBackend {
 	@BeforeClass
 	public static void setupTestFiles() {
 		for (File file : root.listFiles()) {
-			file.delete();
+			if (!file.getName().equals(".svn")) {
+				file.delete();
+			}
 		}
 
 		File file1 = new File("./data/filename1.txt");
@@ -51,7 +53,9 @@ public class TestBackend {
 		wantedFilenames.add("filefile.file");
 
 		for (File file : root.listFiles()) {
-			assertTrue(wantedFilenames.contains(file.getName()));
+			if (!file.getName().equals(".svn")) {
+				assertTrue(wantedFilenames.contains(file.getName()));
+			}
 		}
 	}
 
@@ -73,7 +77,9 @@ public class TestBackend {
 		renamer.applyChanges();
 
 		for (File file : root.listFiles()) {
-			assertTrue(wantedFilenames.contains(file.getName()));
+			if (!file.getName().equals(".svn")) {
+				assertTrue(wantedFilenames.contains(file.getName()));
+			}
 		}
 	}
 }
