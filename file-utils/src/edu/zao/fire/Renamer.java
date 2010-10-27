@@ -113,10 +113,18 @@ public class Renamer {
 			try {
 				// TODO: cause actual changes to happen
 				String newName = currentRule.getNewName(file);
-				System.out.println("want to rename " + file.getName() + " to " + currentRule.getNewName(file));
-				File newFile = new File(newName);
-				file.renameTo(newFile);
+
+				String fullName = file.getCanonicalPath();
+				int fileNameIndex = fullName.lastIndexOf(file.getName());
+				fullName = fullName.substring(0, fileNameIndex) + newName;
+
+				File newFile = new File(fullName);
+				boolean success = file.renameTo(newFile);
+				if (!success) {
+					System.err.println("Could not rename " + file);
+				}
 			} catch (IOException e) {
+				System.out.println("error :(");
 				// tell the error listeners that something went wrong
 				throwError(ErrorType.IOException, file, currentRule);
 			}

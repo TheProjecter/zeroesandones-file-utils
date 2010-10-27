@@ -30,9 +30,10 @@ public class MatchReplaceRule implements RenamerRule {
 	public String getNewName(File file) throws IOException {
 		String fileName = file.getName();
 		String newName = fileName.replace(matchString, replaceString);
-		String fullName = file.getCanonicalPath();
-		int fileNameIndex = fullName.lastIndexOf(fileName);
-		return fullName.substring(0, fileNameIndex) + newName;
+		return newName;
+		// String fullName = file.getCanonicalPath();
+		// int fileNameIndex = fullName.lastIndexOf(fileName);
+		// return fullName.substring(0, fileNameIndex) + newName;
 	}
 
 	/**

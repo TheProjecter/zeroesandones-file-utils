@@ -8,7 +8,7 @@ public interface RenamerRule extends Serializable {
 	/**
 	 * @param file
 	 *            A file that this RenamerRule will be applied to.
-	 * @return The new <i>full</i> name of the file
+	 * @return The new name of the file
 	 * @throws IOException
 	 */
 	String getNewName(File file) throws IOException;

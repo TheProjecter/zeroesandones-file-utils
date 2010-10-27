@@ -7,15 +7,15 @@ import java.util.TreeSet;
 public class BrowserURLHistory {
 	private final ArrayList<String> currentHistorySequence = new ArrayList<String>();
 	private final Set<String> visitedLocations = new TreeSet<String>();
-	/** probably want to maintain an int for current location
-	 * url is a string, coming from the file view
-	 * add a method that returns the current location url(in history/action/time)
-	 * only need to save up to 256 urls
-	 * and thus, Chris began his adventure in Java.....
+	/**
+	 * probably want to maintain an int for current location url is a string,
+	 * coming from the file view add a method that returns the current location
+	 * url(in history/action/time) only need to save up to 256 urls and thus,
+	 * Chris began his adventure in Java.....
 	 */
 
-	private int currentHistoryLocation=0; 
-	
+	private int currentHistoryLocation = -1;
+
 	/**
 	 * Add the given <code>url</code> to the url history. If the current history
 	 * position has been regressed to any point before the <code>head</code>,
@@ -28,10 +28,14 @@ public class BrowserURLHistory {
 	public void visitLocation(String url) {
 		visitedLocations.add(url);
 
-
-		// TODO: implement this for real
+		int index = currentHistoryLocation + 1;
+		while (index < currentHistorySequence.size()) {
+			currentHistorySequence.remove(index);
+		}
 		currentHistorySequence.add(url);
 		currentHistoryLocation++;
+
+		debugPrintHistory();
 	}
 
 	/**
@@ -40,13 +44,11 @@ public class BrowserURLHistory {
 	 * method should do nothing.
 	 */
 	public void regressHistory() {
-		// TODO: implement this
-		if(currentHistoryLocation>0){
-			//currentHistorySequence.remove(currentHistoryLocation);
-			currentHistoryLocation--;			
+		if (currentHistoryLocation > 0) {
+			// currentHistorySequence.remove(currentHistoryLocation);
+			currentHistoryLocation--;
 		}
-		
-		
+		debugPrintHistory();
 	}
 
 	/**
@@ -56,13 +58,7 @@ public class BrowserURLHistory {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean canRegressHistory() {
-		// TODO: implement this
-		if(currentHistoryLocation>0){
-			return true;
-			
-		}
-
-		return false;
+		return currentHistoryLocation > 0;
 	}
 
 	/**
@@ -72,11 +68,10 @@ public class BrowserURLHistory {
 	 * do nothing.
 	 */
 	public void progressHistory() {
-		// TODO: implement this
-		
-		if(currentHistoryLocation!=currentHistorySequence.size()){
+		if (currentHistoryLocation != currentHistorySequence.size()) {
 			currentHistoryLocation++;
 		}
+		debugPrintHistory();
 	}
 
 	/**
@@ -86,8 +81,7 @@ public class BrowserURLHistory {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean canProgressHistory() {
-		// TODO: implement this
-		return false;
+		return currentHistoryLocation < currentHistorySequence.size() - 1;
 	}
 
 	/**
@@ -96,16 +90,29 @@ public class BrowserURLHistory {
 	 *         cleared by a backwards navigational path.
 	 */
 	public Iterable<String> getVisitedLocations() {
-		
-		
 		return visitedLocations;
 	}
-	
-	/** Returns the current location in the url history ArrayList
+
+	/**
+	 * Returns the current location in the url history ArrayList
 	 * 
 	 */
-	public String getCurrentLocation(){
+	public String getCurrentLocation() {
 		return currentHistorySequence.get(currentHistoryLocation);
 	}
-	
+
+	private void debugPrintHistory() {
+		System.out.print("History:\t");
+		for (int i = 0; i < currentHistorySequence.size(); i++) {
+			if (i == currentHistoryLocation)
+				System.out.print("<");
+
+			System.out.print(currentHistorySequence.get(i));
+
+			if (i == currentHistoryLocation)
+				System.out.print(">");
+			System.out.print("\t");
+		}
+		System.out.println();
+	}
 }
