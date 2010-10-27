@@ -91,4 +91,14 @@ public class MatchReplaceRule implements RenamerRule {
 	public CapitalizationStyle getCapitalizationState() {
 		return capitalizationState;
 	}
+
+	@Override
+	public void setup() {
+		// no setup actions are required
+	}
+
+	@Override
+	public void tearDown() {
+		// no teardown actions are required
+	}
 }
