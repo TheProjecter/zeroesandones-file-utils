@@ -8,7 +8,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import edu.zao.fire.Renamer;
+
 public class BrowserTableLabelProvider extends StyledCellLabelProvider {
+
+	private final Renamer renamer;
+
+	public BrowserTableLabelProvider(Renamer renamer) {
+		this.renamer = renamer;
+	}
 
 	@Override
 	public void update(ViewerCell cell) {
@@ -29,6 +37,8 @@ public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 		switch (columnIndex) {
 		case 0:
 			return file.getName();
+		case 1:
+			return renamer.getNewName(file);
 		default:
 			return "-";
 		}
@@ -43,6 +53,7 @@ public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 			throw new IllegalArgumentException("element must be a File");
 		}
 		File file = (File) element;
+
 		if (file.isDirectory()) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		} else if (file.isFile()) {

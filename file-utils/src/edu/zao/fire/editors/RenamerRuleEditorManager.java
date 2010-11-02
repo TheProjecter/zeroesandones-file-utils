@@ -64,6 +64,7 @@ public class RenamerRuleEditorManager {
 	 *            The new active editor
 	 */
 	private void fireEditorChanged(RenamerRuleEditor editor) {
+		System.out.println("new editor is " + editor);
 		for (ActiveEditorListener listener : listeners) {
 			listener.activeEditorChanged(editor);
 		}

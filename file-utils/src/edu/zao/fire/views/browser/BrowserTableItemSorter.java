@@ -1,10 +1,11 @@
-package edu.zao.fire.views.renamer;
+package edu.zao.fire.views.browser;
+
+import java.io.File;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-
-public class RenamerItemSorter extends ViewerSorter {
+public class BrowserTableItemSorter extends ViewerSorter {
 	private int columnIndex = 0;
 	private boolean descending;
 
@@ -18,17 +19,16 @@ public class RenamerItemSorter extends ViewerSorter {
 	}
 
 	private int baseCompare(Viewer viewer, Object e1, Object e2) {
-		RenamerItem item1 = (RenamerItem) e1;
-		RenamerItem item2 = (RenamerItem) e2;
-
-		int category1 = item1.getFile().isDirectory() ? 0 : 1;
-		int category2 = item2.getFile().isDirectory() ? 0 : 1;
+		File item1 = (File) e1;
+		File item2 = (File) e2;
+		int category1 = item1.isDirectory() ? 0 : 1;
+		int category2 = item2.isDirectory() ? 0 : 1;
 
 		if (category1 != category2) {
 			return category1 - category2;
 		}
 
-		return item1.getFile().getName().compareToIgnoreCase(item2.getFile().getName());
+		return item1.getName().compareToIgnoreCase(item2.getName());
 	}
 
 	@Override

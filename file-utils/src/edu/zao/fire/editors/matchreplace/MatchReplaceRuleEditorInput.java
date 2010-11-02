@@ -4,7 +4,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
+import edu.zao.fire.MatchReplaceRule;
+
 public class MatchReplaceRuleEditorInput implements IEditorInput {
+
+	private final MatchReplaceRule rule = new MatchReplaceRule();
+
+	public MatchReplaceRule getRule() {
+		return rule;
+	}
 
 	@Override
 	public boolean exists() {

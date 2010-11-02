@@ -16,6 +16,7 @@ import org.eclipse.ui.PartInitException;
 
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
+import edu.zao.fire.rcp.Activator;
 
 public class ListRuleEditor extends RenamerRuleEditor {
 
@@ -163,8 +164,7 @@ public class ListRuleEditor extends RenamerRuleEditor {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		Activator.getDefault().getEditorManager().setActiveEditor(this);
 	}
 
 }

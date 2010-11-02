@@ -3,8 +3,13 @@ package edu.zao.fire;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import edu.zao.fire.editors.RenamerRuleChangeListener;
+import edu.zao.fire.editors.RenamerRuleEditor;
+import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
 import edu.zao.fire.util.FileGatherer;
 
 /**
@@ -15,37 +20,42 @@ import edu.zao.fire.util.FileGatherer;
  * 
  * @author dylan
  */
-public class Renamer {
+public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener {
 	private RenamerRule currentRule;
 	private File currentDirectory;
 	private final List<File> localFiles = new ArrayList<File>();
 
+	/**
+	 * Maps original filenames to their new names; original value is the key
+	 */
+	private final Map<String, String> newNamesMap = new HashMap<String, String>();
+
 	// ----------------------------------------------------------------
-	// Section for error handling and error listeners
+	// Section for event handling and event listeners
 	// ----------------------------------------------------------------
 
 	/**
-	 * Enumeration that describes the types of various errors that could happen
+	 * Enumeration that describes the types of various events that could happen
 	 * during the renaming process.
 	 */
-	public static enum ErrorType {
-		IOException, NameConflict
-		// TODO: add more when we find more error cases
+	public static enum EventType {
+		UpdatedNames, IOException, NameConflict
+		// TODO: add more when we find more event cases
 	}
 
 	/**
 	 * Interface that defines the behavior of an object that listens to this
-	 * Renamer for status updates concerning errors.
+	 * Renamer for status update events.
 	 * 
 	 * @author dylan
 	 */
-	public static interface ErrorListener {
+	public static interface EventListener {
 		/**
-		 * This function will be called if this ErrorListener has been added to
-		 * a {@link Renamer} via {@link Renamer#addErrorListener(ErrorListener)}
+		 * This function will be called if this EventListener has been added to
+		 * a {@link Renamer} via {@link Renamer#addEventListener(EventListener)}
 		 * .
 		 * 
-		 * @param errorType
+		 * @param eventType
 		 *            The type of the error caused by the Renamer.
 		 * @param file
 		 *            The file in question that was unable to be renamed.
@@ -53,37 +63,37 @@ public class Renamer {
 		 *            The {@link RenamerRule} that was being used when the error
 		 *            was caused.
 		 */
-		void gotError(ErrorType errorType, File file, RenamerRule rule);
+		void seeEvent(EventType eventType, File file, RenamerRule rule);
 	}
 
-	private final List<ErrorListener> errorListeners = new ArrayList<ErrorListener>();
+	private final List<EventListener> eventListeners = new ArrayList<EventListener>();
 
 	/**
-	 * Add an {@link ErrorListener} to be notified whenever this Renamer
-	 * encounters an error.
+	 * Add an {@link EventListener} to be notified whenever this Renamer goes
+	 * through some observable event.
 	 * 
 	 * @param listener
-	 *            The {@link ErrorListener} to be added.
+	 *            The {@link EventListener} to be added.
 	 */
-	public void addErrorListener(ErrorListener listener) {
-		errorListeners.add(listener);
+	public void addEventListener(EventListener listener) {
+		eventListeners.add(listener);
 	}
 
 	/**
-	 * Remove an {@link ErrorListener} so that it will no longer be notified
-	 * whenever this Renamer encounters an error.
+	 * Remove an {@link EventListener} so that it will no longer be notified
+	 * whenever this Renamer goes through some observable event.
 	 * 
 	 * @param listener
-	 *            The {@link ErrorListener} to be removed.
+	 *            The {@link EventListener} to be removed.
 	 */
-	public void removeErrorListener(ErrorListener listener) {
-		errorListeners.remove(listener);
+	public void removeEventListener(EventListener listener) {
+		eventListeners.remove(listener);
 	}
 
 	/**
-	 * Notify all {@link ErrorListener}s that an error has occurred.
+	 * Notify all {@link EventListener}s that an error has occurred.
 	 * 
-	 * @param errorType
+	 * @param eventType
 	 *            The type of the error caused by this Renamer.
 	 * @param file
 	 *            The file in question that was unable to be renamed.
@@ -91,45 +101,45 @@ public class Renamer {
 	 *            The {@link RenamerRule} that was being used when the error was
 	 *            caused.
 	 */
-	private void throwError(ErrorType errorType, File file, RenamerRule rule) {
-		for (ErrorListener listener : errorListeners) {
-			listener.gotError(errorType, file, rule);
+	private void fireEvent(EventType eventType, File file, RenamerRule rule) {
+		for (EventListener listener : eventListeners) {
+			listener.seeEvent(eventType, file, rule);
 		}
 	}
 
 	// ----------------------------------------------------------------
-	// End of error handling section
+	// End of event handling section
 	// ----------------------------------------------------------------
 
 	/**
 	 * Apply the current renaming rule to all of the files in the current
 	 * directory. If any errors are encountered during this process, the
-	 * {@link ErrorListener}s should be notified.
+	 * {@link EventListener}s should be notified.
 	 */
 	public void applyChanges() {
 		// TODO: add a naming conflict check
-		currentRule.setup();
 		for (File file : localFiles) {
 			try {
-				// TODO: cause actual changes to happen
-				String newName = currentRule.getNewName(file);
+				String currentName = file.getName();
+				String newName = newNamesMap.get(currentName);
 
-				String fullName = file.getCanonicalPath();
-				int fileNameIndex = fullName.lastIndexOf(file.getName());
-				fullName = fullName.substring(0, fileNameIndex) + newName;
+				if (!currentName.equals(newName)) {
+					String fullName = file.getCanonicalPath();
+					int fileNameIndex = fullName.lastIndexOf(file.getName());
+					fullName = fullName.substring(0, fileNameIndex) + newName;
 
-				File newFile = new File(fullName);
-				boolean success = file.renameTo(newFile);
-				if (!success) {
-					System.err.println("Could not rename " + file);
+					File newFile = new File(fullName);
+					boolean success = file.renameTo(newFile);
+					if (!success) {
+						System.err.println("Could not rename " + file);
+					}
 				}
 			} catch (IOException e) {
-				System.out.println("error :(");
 				// tell the error listeners that something went wrong
-				throwError(ErrorType.IOException, file, currentRule);
+				fireEvent(EventType.IOException, file, currentRule);
 			}
 		}
-		currentRule.tearDown();
+		setCurrentDirectory(currentDirectory);
 	}
 
 	/**
@@ -151,6 +161,8 @@ public class Renamer {
 		for (File file : new FileGatherer(directory)) {
 			localFiles.add(file);
 		}
+		System.out.println("Directory changed");
+		rebuildNewNamesCache();
 	}
 
 	/**
@@ -168,7 +180,9 @@ public class Renamer {
 	 *            The {@link RenamerRule} to be set as the new current rule.
 	 */
 	public void setCurrentRule(RenamerRule rule) {
+		System.out.println("set current rule to " + rule);
 		currentRule = rule;
+		rebuildNewNamesCache();
 	}
 
 	/**
@@ -184,5 +198,58 @@ public class Renamer {
 	 */
 	public Iterable<File> getLocalFiles() {
 		return localFiles;
+	}
+
+	/**
+	 * Listener Method: This method is invoked by the RenamerRuleEditorManager
+	 * when a different RenamerRuleEditor gets user focus. When this happens,
+	 * this Renamer's <code>currentRule</code> is set to the new active editor's
+	 * rule.
+	 */
+	@Override
+	public void activeEditorChanged(RenamerRuleEditor newActiveEditor) {
+		System.out.println("active editor was changed");
+		setCurrentRule(newActiveEditor.getRule());
+	}
+
+	/**
+	 * Listener Method: This method is invoked by a RenamerRuleEditor whenever
+	 * that editor's rule has been modified by the UI. When this happens, the
+	 * modified names of all of the local files will be recalculated.
+	 */
+	@Override
+	public void ruleChanged(RenamerRule rule) {
+		System.out.println("renamer rule was modified");
+		rebuildNewNamesCache();
+	}
+
+	/**
+	 * Recalculate all of the modified names for each local file within the
+	 * <code>currentDirectory</code>. These names will be stored in a local
+	 * cache.
+	 */
+	private void rebuildNewNamesCache() {
+		System.out.println("rebuilding names cache");
+		newNamesMap.clear();
+
+		if (currentRule == null) {
+			return;
+		}
+		currentRule.setup();
+		for (File file : localFiles) {
+			String oldName = file.getName();
+			try {
+				String newName = currentRule.getNewName(file);
+				newNamesMap.put(oldName, newName);
+			} catch (IOException e) {
+				fireEvent(EventType.IOException, file, currentRule);
+			}
+		}
+		currentRule.tearDown();
+		fireEvent(EventType.UpdatedNames, null, currentRule);
+	}
+
+	public String getNewName(File file) {
+		return newNamesMap.get(file.getName());
 	}
 }

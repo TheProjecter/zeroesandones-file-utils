@@ -7,6 +7,7 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -24,19 +25,23 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.zao.fire.Renamer;
+import edu.zao.fire.Renamer.EventType;
+import edu.zao.fire.RenamerRule;
 import edu.zao.fire.views.browser.urlassist.URLContentProposalProvider;
 
 public class BrowserView extends ViewPart {
 
-	final Renamer renamer = new Renamer();
+	private final Renamer renamer = new Renamer();
 
-	final BrowserURLHistory urlHistory = new BrowserURLHistory();
+	private final BrowserURLHistory urlHistory = new BrowserURLHistory();
 
 	private Button historyBackButton;
 
@@ -46,11 +51,11 @@ public class BrowserView extends ViewPart {
 
 	private TableViewer browserTableViewer;
 
-	// private ComboViewer urlComboViewer;
-
 	private Text currentURLText;
 
 	private Button browseButton;
+
+	private Button applyButton;
 
 	public BrowserView() {
 		String userHomePath = System.getProperty("user.home");
@@ -83,43 +88,13 @@ public class BrowserView extends ViewPart {
 		browserUpLevelButton = new Button(toolbarTopArea, SWT.PUSH);
 		browserUpLevelButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_UP));
 
-		// create the url bar
-		// urlComboViewer = new ComboViewer(toolbarTopArea, SWT.DROP_DOWN |
-		// SWT.SINGLE);
-		// urlComboViewer.getCombo().setLayoutData(new GridData(SWT.FILL,
-		// SWT.CENTER, true, false));
-		//
-		// urlComboViewer.setContentProvider(new BrowserURLContentProvider());
-		// urlComboViewer.setLabelProvider(new BrowserURLLabelProvider());
-		// urlComboViewer.setInput(urlHistory);
-
 		currentURLText = new Text(toolbarTopArea, SWT.SINGLE | SWT.BORDER);
 		currentURLText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		// TODO: Move the proposal provider stuff into another class somewhere
-		// to reduce clutter here.
-
-		// IContentProposalProvider proposalProvider = new
-		// IContentProposalProvider() {
-		//
-		// @Override
-		// public IContentProposal[] getProposals(String contents, int position)
-		// {
-		// ArrayList<IContentProposal> proposals = new
-		// ArrayList<IContentProposal>();
-		// for (String url : urlHistory.getVisitedLocations()) {
-		// IContentProposal proposal = new URLContentProposal(url);
-		// proposals.add(proposal);
-		// }
-		// return proposals.toArray(new IContentProposal[proposals.size()]);
-		// }
-		// };
 
 		KeyStroke keyStroke = null;
 		try {
 			keyStroke = KeyStroke.getInstance("Ctrl+Space");
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -135,12 +110,8 @@ public class BrowserView extends ViewPart {
 		browseButton.setText("Browse...");
 		browseButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
-		// create the table viewer for the browser
-		browserTableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		browserTableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		browserTableViewer.setContentProvider(new BrowserTableContentProvider());
-		browserTableViewer.setLabelProvider(new BrowserTableLabelProvider());
-		browserTableViewer.setInput(renamer);
+		// create the browser table viewer
+		createBrowserTableViewer(parent);
 
 		// create the area for the bottom bar
 		Composite bottomBarArea = new Composite(parent, SWT.NONE);
@@ -158,7 +129,7 @@ public class BrowserView extends ViewPart {
 		Button redoButton = new Button(bottomBarArea, SWT.PUSH);
 		redoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_REDO));
 
-		Button applyButton = new Button(bottomBarArea, SWT.PUSH);
+		applyButton = new Button(bottomBarArea, SWT.PUSH);
 		applyButton.setText("Apply Changes");
 		applyButton.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, false));
 
@@ -167,20 +138,77 @@ public class BrowserView extends ViewPart {
 		limitDisplayCheck
 				.setToolTipText("If checked, the browser will only show items whose names\n would be changed by applying the current renaming rule.");
 
-		addNavigationListeners();
+		addListeners();
+
+		new RenamerUIAdapter(renamer).installListeners();
 
 		urlHistory.visitLocation(renamer.getCurrentDirectory().getAbsolutePath());
 		sendBrowserToLocation(renamer.getCurrentDirectory());
 	}
 
-	private void addNavigationListeners() {
+	private void createBrowserTableViewer(Composite parent) {
+		// create the table viewer for the browser
+		browserTableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		browserTableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		browserTableViewer.setContentProvider(new BrowserTableContentProvider());
+
+		final BrowserTableItemSorter tableItemSorter = new BrowserTableItemSorter();
+		browserTableViewer.setSorter(tableItemSorter);
+
+		String[] titles = { "Original Name", "New Name" };
+		int[] bounds = { 180, 180 };
+
+		for (int index = 0; index < titles.length; index++) {
+			final TableViewerColumn column = new TableViewerColumn(browserTableViewer, SWT.LEFT);
+			column.getColumn().setText(titles[index]);
+			column.getColumn().setWidth(bounds[index]);
+			column.getColumn().setResizable(true);
+		}
+		browserTableViewer.setLabelProvider(new BrowserTableLabelProvider(renamer));
+
+		final Table table = browserTableViewer.getTable();
+		final TableColumn sortColumn = table.getColumn(0);
+		sortColumn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				tableItemSorter.setColumn(0);
+				int dir = table.getSortDirection();
+				dir = (dir == SWT.UP) ? SWT.DOWN : SWT.UP;
+				table.setSortDirection(dir);
+				table.setSortColumn(sortColumn);
+				browserTableViewer.refresh();
+			}
+		});
+
+		browserTableViewer.getTable().setHeaderVisible(true);
+
+		browserTableViewer.setInput(renamer);
+
+		// listener that refreshes the browser when the Renamer updates its
+		// names
+		Renamer.EventListener refreshBrowserListener = new Renamer.EventListener() {
+			@Override
+			public void seeEvent(EventType eventType, File file, RenamerRule rule) {
+				if (eventType == Renamer.EventType.UpdatedNames) {
+					System.out.println("refreshing browser");
+					browserTableViewer.refresh(true);
+				}
+			}
+		};
+		renamer.addEventListener(refreshBrowserListener);
+
+	}
+
+	private void addListeners() {
 		// create the "Up one level" listener
 		browserUpLevelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				File parentFile = renamer.getCurrentDirectory().getParentFile();
-				urlHistory.visitLocation(parentFile.getAbsolutePath());
-				sendBrowserToLocation(parentFile);
+				if (parentFile != null) {
+					urlHistory.visitLocation(parentFile.getAbsolutePath());
+					sendBrowserToLocation(parentFile);
+				}
 			}
 		});
 
@@ -278,6 +306,16 @@ public class BrowserView extends ViewPart {
 				}
 			}
 		});
+
+		SelectionAdapter applyChangesListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Clicked apply changes");
+				renamer.applyChanges();
+				// browserTableViewer.setInput(renamer);
+			}
+		};
+		applyButton.addSelectionListener(applyChangesListener);
 	}
 
 	/**

@@ -2,6 +2,8 @@ package edu.zao.fire;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MatchReplaceRule implements RenamerRule {
 
@@ -10,8 +12,8 @@ public class MatchReplaceRule implements RenamerRule {
 	 */
 	private static final long serialVersionUID = 6189927401626899561L;
 
-	private String matchString = " ";
-	private String replaceString = " ";
+	private String matchString = "";
+	private String replaceString = "";
 
 	private boolean isCaseSensitive = false;
 	private boolean matchRegularExpressions = false;
@@ -22,6 +24,12 @@ public class MatchReplaceRule implements RenamerRule {
 
 	private CapitalizationStyle capitalizationState = CapitalizationStyle.NONE;
 
+	public static enum ReplacementLimit {
+		FIRST, ALL
+	}
+
+	private ReplacementLimit replacementLimit = ReplacementLimit.FIRST;
+
 	/**
 	 * Finds each instance of the <code>matchString</code> within the
 	 * <code>file</code>'s name, and replaces it with <code>replaceString</code>
@@ -29,11 +37,95 @@ public class MatchReplaceRule implements RenamerRule {
 	@Override
 	public String getNewName(File file) throws IOException {
 		String fileName = file.getName();
-		String newName = fileName.replace(matchString, replaceString);
-		return newName;
-		// String fullName = file.getCanonicalPath();
-		// int fileNameIndex = fullName.lastIndexOf(fileName);
-		// return fullName.substring(0, fileNameIndex) + newName;
+		String newName;
+		if (matchString.isEmpty()) {
+			newName = fileName;
+		} else {
+			newName = doReplacement(fileName);
+		}
+		return getNameWithCapitalizationStyle(newName, capitalizationState);
+	}
+
+	private String doReplacement(String name) throws IOException {
+		String localMatch;
+		String localReplace;
+		if (matchRegularExpressions) {
+			localMatch = matchString;
+			localReplace = replaceString;
+		} else {
+			localMatch = Pattern.quote(matchString);
+			localReplace = Matcher.quoteReplacement(replaceString);
+		}
+		try {
+			Pattern matchRegex;
+			if (isCaseSensitive) {
+				matchRegex = Pattern.compile(localMatch);
+			} else {
+				matchRegex = Pattern.compile(localMatch, Pattern.CASE_INSENSITIVE);
+			}
+			Matcher matcher = matchRegex.matcher(name);
+			switch (replacementLimit) {
+			case ALL:
+				return matcher.replaceAll(localReplace);
+			case FIRST:
+			default:
+				return matcher.replaceFirst(localReplace);
+			}
+		} catch (Exception e) {
+			throw new UserRegexException(e, name, matchString, replaceString);
+		}
+	}
+
+	private String getNameWithCapitalizationStyle(String name, CapitalizationStyle capStyle) {
+		switch (capStyle) {
+		case ALL_CAPS:
+			return name.toUpperCase();
+		case NO_CAPS:
+			return name.toLowerCase();
+		case NONE:
+			return name;
+		case SENTENCE:
+			return makeSentenceCaseString(name);
+		case TITLE:
+			return makeTitleCaseString(name);
+		}
+		return null;
+	}
+
+	private String makeTitleCaseString(String name) {
+		// capitalize the first letter after any space found in the name
+		StringBuilder sb = new StringBuilder();
+		boolean gotSpace = true;
+		for (int i = 0; i < name.length(); i++) {
+			char c = name.charAt(i);
+			if (gotSpace && Character.isLetter(c)) {
+				sb.append(Character.toUpperCase(c));
+				gotSpace = false;
+			} else {
+				sb.append(Character.toLowerCase(c));
+			}
+			if (Character.isWhitespace(c)) {
+				gotSpace = true;
+			}
+		}
+		return sb.toString();
+	}
+
+	private String makeSentenceCaseString(String name) {
+		// capitalize the first letter found in the name
+		StringBuilder sb = new StringBuilder();
+		boolean gotFirstLetter = false;
+		for (int i = 0; i < name.length(); i++) {
+			char c = name.charAt(i);
+			if (!gotFirstLetter && Character.isLetter(c)) {
+				sb.append(Character.toUpperCase(c));
+				gotFirstLetter = true;
+			} else {
+				sb.append(Character.toLowerCase(c));
+				System.out.print(sb.toString() + " -> ");
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -93,6 +185,14 @@ public class MatchReplaceRule implements RenamerRule {
 		return capitalizationState;
 	}
 
+	public void setReplacementLimit(ReplacementLimit replacementLimit) {
+		this.replacementLimit = replacementLimit;
+	}
+
+	public ReplacementLimit getReplacementLimit() {
+		return replacementLimit;
+	}
+
 	@Override
 	public void setup() {
 		// no setup actions are required
@@ -102,4 +202,5 @@ public class MatchReplaceRule implements RenamerRule {
 	public void tearDown() {
 		// no teardown actions are required
 	}
+
 }

@@ -3,7 +3,6 @@ package edu.zao.fire.commands;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -12,7 +11,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import edu.zao.fire.editors.matchreplace.MatchReplaceRuleEditorInput;
 import edu.zao.fire.editors.metadata.MetadataRuleEditor;
 
-public class OpenMetadataCommandHandler extends AbstractHandler implements IHandler {
+public class OpenMetadataCommandHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -26,5 +25,4 @@ public class OpenMetadataCommandHandler extends AbstractHandler implements IHand
 		}
 		return null;
 	}
-
 }

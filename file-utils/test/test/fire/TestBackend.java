@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.zao.fire.MatchReplaceRule;
+import edu.zao.fire.MatchReplaceRule.ReplacementLimit;
 import edu.zao.fire.Renamer;
 
 public class TestBackend {
@@ -65,6 +66,7 @@ public class TestBackend {
 
 		mrRule.setMatchString("file");
 		mrRule.setReplaceString("error");
+		mrRule.setReplacementLimit(ReplacementLimit.ALL);
 		renamer.setCurrentRule(mrRule);
 
 		Set<String> wantedFilenames = new TreeSet<String>();

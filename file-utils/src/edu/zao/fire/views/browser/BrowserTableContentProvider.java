@@ -30,6 +30,9 @@ public class BrowserTableContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (newInput == null) {
+			return;
+		}
 		if (newInput instanceof Renamer) {
 			input = (Renamer) newInput;
 		} else {
