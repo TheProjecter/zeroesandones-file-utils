@@ -1,23 +1,16 @@
 package edu.zao.fire.editors.matchreplace;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPersistableElement;
 
 import edu.zao.fire.MatchReplaceRule;
+import edu.zao.fire.editors.RenamerRuleEditorInput;
 
-public class MatchReplaceRuleEditorInput implements IEditorInput {
+public class MatchReplaceRuleEditorInput extends RenamerRuleEditorInput {
 
 	private final MatchReplaceRule rule = new MatchReplaceRule();
 
 	public MatchReplaceRule getRule() {
 		return rule;
-	}
-
-	@Override
-	public boolean exists() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -29,13 +22,7 @@ public class MatchReplaceRuleEditorInput implements IEditorInput {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "Editor input lalala";
-	}
-
-	@Override
-	public IPersistableElement getPersistable() {
-		// TODO Auto-generated method stub
-		return null;
+		return "new Match/Replace rule";
 	}
 
 	@Override
@@ -43,11 +30,4 @@ public class MatchReplaceRuleEditorInput implements IEditorInput {
 		// TODO Auto-generated method stub
 		return "This is the tooltip";
 	}
-
-	@Override
-	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

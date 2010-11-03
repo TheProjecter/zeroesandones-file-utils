@@ -3,7 +3,6 @@ package edu.zao.fire.editors.matchreplace;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -25,7 +24,6 @@ import edu.zao.fire.MatchReplaceRule.CapitalizationStyle;
 import edu.zao.fire.MatchReplaceRule.ReplacementLimit;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
-import edu.zao.fire.rcp.Activator;
 
 public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 	public final static String ID = "file-utils.editors.matchreplace";
@@ -63,20 +61,11 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 	}
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
-		System.out.println("Doing save");
-	}
-
-	@Override
-	public void doSaveAs() {
-		System.out.println("Doing save as");
-	}
-
-	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
 		inputRule = ((MatchReplaceRuleEditorInput) input).getRule();
+		setPartName(input.getName());
 	}
 
 	private void selectRuleConfigurationInUI() {
@@ -94,16 +83,6 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		radioSentenceCaps.setSelection(capState == CapitalizationStyle.SENTENCE);
 		radioTitleCaps.setSelection(capState == CapitalizationStyle.TITLE);
 		radioDontCareCaps.setSelection(capState == CapitalizationStyle.NONE);
-	}
-
-	@Override
-	public boolean isDirty() {
-		return true;
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		return true;
 	}
 
 	@Override
@@ -269,10 +248,4 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 			fireRuleChanged(inputRule);
 		}
 	}
-
-	@Override
-	public void setFocus() {
-		Activator.getDefault().getEditorManager().setActiveEditor(this);
-	}
-
 }

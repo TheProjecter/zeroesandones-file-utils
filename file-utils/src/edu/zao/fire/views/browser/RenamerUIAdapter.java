@@ -55,6 +55,9 @@ public class RenamerUIAdapter implements ActiveEditorListener {
 	 */
 	@Override
 	public void activeEditorChanged(RenamerRuleEditor newActiveEditor) {
+		if (newActiveEditor == null) {
+			return;
+		}
 		if (!editorsSubscribedTo.contains(newActiveEditor)) {
 			editorsSubscribedTo.add(newActiveEditor);
 			newActiveEditor.addRuleChangeListener(renamer);

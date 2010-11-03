@@ -209,7 +209,11 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	@Override
 	public void activeEditorChanged(RenamerRuleEditor newActiveEditor) {
 		System.out.println("active editor was changed");
-		setCurrentRule(newActiveEditor.getRule());
+		if (newActiveEditor == null) {
+			setCurrentRule(null);
+		} else {
+			setCurrentRule(newActiveEditor.getRule());
+		}
 	}
 
 	/**
@@ -232,20 +236,21 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 		System.out.println("rebuilding names cache");
 		newNamesMap.clear();
 
-		if (currentRule == null) {
-			return;
+		if (currentRule != null) {
+			currentRule.setup();
 		}
-		currentRule.setup();
 		for (File file : localFiles) {
 			String oldName = file.getName();
 			try {
-				String newName = currentRule.getNewName(file);
+				String newName = (currentRule == null) ? oldName : currentRule.getNewName(file);
 				newNamesMap.put(oldName, newName);
 			} catch (IOException e) {
 				fireEvent(EventType.IOException, file, currentRule);
 			}
 		}
-		currentRule.tearDown();
+		if (currentRule != null) {
+			currentRule.tearDown();
+		}
 		fireEvent(EventType.UpdatedNames, null, currentRule);
 	}
 

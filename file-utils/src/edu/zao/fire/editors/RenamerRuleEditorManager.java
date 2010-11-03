@@ -81,8 +81,15 @@ public class RenamerRuleEditorManager {
 	 */
 	public void setActiveEditor(RenamerRuleEditor editor) {
 		if (editor != activeEditor) {
+			activeEditor = editor;
 			fireEditorChanged(editor);
 		}
-		activeEditor = editor;
+	}
+
+	public void editorDisposed(RenamerRuleEditor editor) {
+		if (editor == activeEditor) {
+			activeEditor = null;
+			fireEditorChanged(null);
+		}
 	}
 }

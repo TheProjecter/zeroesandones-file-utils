@@ -100,9 +100,10 @@
                   tooltip="New Match/Replace Rule">
             </command>
             <command
-                  commandId="org.eclipse.ui.file.save"
+                  commandId="file-utils.commands.saveCurrentEditor"
+                  icon="IMG_ETOOL_SAVE_EDIT"
                   style="push"
-                  tooltip="This is a dummy button. A real save button should eventually go here.">
+                  tooltip="Save Current Rule">
             </command>
          </toolbar>
       </menuContribution>
@@ -182,6 +183,10 @@
             id="file-utils.commands.openlist"
             name="New List Rule">
       </command>
+      <command
+            id="file-utils.commands.saveCurrentEditor"
+            name="Save">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -196,6 +201,10 @@
       <handler
             class="edu.zao.fire.commands.OpenListCommandHandler"
             commandId="file-utils.commands.openlist">
+      </handler>
+      <handler
+            class="edu.zao.fire.commands.SaveCurrentCommandHandler"
+            commandId="file-utils.commands.saveCurrentEditor">
       </handler>
    </extension>
    <extension
