@@ -1,5 +1,7 @@
 package edu.zao.fire.editors.matchreplace;
 
+import java.io.File;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import edu.zao.fire.MatchReplaceRule;
@@ -13,8 +15,9 @@ public class MatchReplaceRuleEditorInput extends RenamerRuleEditorInput {
 		rule = new MatchReplaceRule();
 	}
 
-	public MatchReplaceRuleEditorInput(MatchReplaceRule rule) {
+	public MatchReplaceRuleEditorInput(MatchReplaceRule rule, File saveFile) {
 		this.rule = rule;
+		this.saveFile = saveFile;
 	}
 
 	public MatchReplaceRule getRule() {

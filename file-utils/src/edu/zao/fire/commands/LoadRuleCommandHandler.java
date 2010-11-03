@@ -49,7 +49,7 @@ public class LoadRuleCommandHandler extends AbstractHandler {
 
 				if (rule instanceof MatchReplaceRule) {
 					MatchReplaceRule mrRule = (MatchReplaceRule) rule;
-					MatchReplaceRuleEditorInput input = new MatchReplaceRuleEditorInput(mrRule);
+					MatchReplaceRuleEditorInput input = new MatchReplaceRuleEditorInput(mrRule, ruleFile);
 					try {
 						page.openEditor(input, MatchReplaceRuleEditor.ID);
 					} catch (PartInitException e) {
@@ -59,7 +59,7 @@ public class LoadRuleCommandHandler extends AbstractHandler {
 
 				if (rule instanceof ListRule) {
 					ListRule lRule = (ListRule) rule;
-					ListRuleEditorInput input = new ListRuleEditorInput(lRule);
+					ListRuleEditorInput input = new ListRuleEditorInput(lRule, ruleFile);
 					try {
 						page.openEditor(input, ListRuleEditor.ID);
 					} catch (PartInitException e) {
@@ -69,7 +69,7 @@ public class LoadRuleCommandHandler extends AbstractHandler {
 
 				if (rule instanceof MetadataRule) {
 					MetadataRule mRule = (MetadataRule) rule;
-					MetadataRuleEditorInput input = new MetadataRuleEditorInput(mRule);
+					MetadataRuleEditorInput input = new MetadataRuleEditorInput(mRule, ruleFile);
 					try {
 						page.openEditor(input, MetadataRuleEditor.ID);
 					} catch (PartInitException e) {

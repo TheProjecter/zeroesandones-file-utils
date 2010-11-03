@@ -1,5 +1,7 @@
 package edu.zao.fire.editors.list;
 
+import java.io.File;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import edu.zao.fire.ListRule;
@@ -13,8 +15,9 @@ public class ListRuleEditorInput extends RenamerRuleEditorInput {
 		rule = new ListRule();
 	}
 
-	public ListRuleEditorInput(ListRule rule) {
+	public ListRuleEditorInput(ListRule rule, File saveFile) {
 		this.rule = rule;
+		this.saveFile = saveFile;
 	}
 
 	public ListRule getRule() {

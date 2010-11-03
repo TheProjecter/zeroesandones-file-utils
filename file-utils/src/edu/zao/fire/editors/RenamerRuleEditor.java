@@ -88,10 +88,10 @@ public abstract class RenamerRuleEditor extends EditorPart {
 		try {
 			input.saveRuleToFile(getRule(), outFile);
 			String newTitle = outFile.getName();
-			int frrIndex = newTitle.indexOf(".frr");
-			if (frrIndex >= 0) {
-				newTitle = newTitle.substring(0, frrIndex);
-			}
+			// int frrIndex = newTitle.indexOf(".frr");
+			// if (frrIndex >= 0) {
+			// newTitle = newTitle.substring(0, frrIndex);
+			// }
 			setPartName(newTitle);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

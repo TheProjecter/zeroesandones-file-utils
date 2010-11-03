@@ -1,5 +1,7 @@
 package edu.zao.fire.editors.metadata;
 
+import java.io.File;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import edu.zao.fire.MetadataRule;
@@ -13,8 +15,9 @@ public class MetadataRuleEditorInput extends RenamerRuleEditorInput {
 		rule = new MetadataRule();
 	}
 
-	public MetadataRuleEditorInput(MetadataRule rule) {
+	public MetadataRuleEditorInput(MetadataRule rule, File saveFile) {
 		this.rule = rule;
+		this.saveFile = saveFile;
 	}
 
 	public MetadataRule getRule() {
