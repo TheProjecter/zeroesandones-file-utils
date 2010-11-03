@@ -47,9 +47,11 @@ public class SaveCurrentCommandHandler extends AbstractHandler implements Active
 
 	@Override
 	public void activeEditorChanged(RenamerRuleEditor newActiveEditor) {
-		if (!editorsObserved.contains(newActiveEditor)) {
-			editorsObserved.add(newActiveEditor);
-			newActiveEditor.addRuleChangeListener(this);
+		if (newActiveEditor != null) {
+			if (!editorsObserved.contains(newActiveEditor)) {
+				editorsObserved.add(newActiveEditor);
+				newActiveEditor.addRuleChangeListener(this);
+			}
 		}
 		fireHandlerChanged(new HandlerEvent(this, true, false));
 	}
