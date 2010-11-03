@@ -100,8 +100,15 @@
                   tooltip="New Match/Replace Rule">
             </command>
             <command
+                  commandId="file-utils.commands.openRule"
+                  icon="IMG_OBJ_FOLDER"
+                  id="file-utils.toolbar.open"
+                  style="push">
+            </command>
+            <command
                   commandId="file-utils.commands.saveCurrentEditor"
                   icon="IMG_ETOOL_SAVE_EDIT"
+                  id="file-utils.toolbar.save"
                   style="push"
                   tooltip="Save Current Rule">
             </command>
@@ -187,6 +194,10 @@
             id="file-utils.commands.saveCurrentEditor"
             name="Save">
       </command>
+      <command
+            id="file-utils.commands.openRule"
+            name="Open Rule">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -205,6 +216,10 @@
       <handler
             class="edu.zao.fire.commands.SaveCurrentCommandHandler"
             commandId="file-utils.commands.saveCurrentEditor">
+      </handler>
+      <handler
+            class="edu.zao.fire.commands.LoadRuleCommandHandler"
+            commandId="file-utils.commands.openRule">
       </handler>
    </extension>
    <extension

@@ -1,6 +1,5 @@
 package edu.zao.fire.editors.list;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -14,6 +13,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+import edu.zao.fire.ListRule;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.rcp.Activator;
@@ -22,6 +22,8 @@ public class ListRuleEditor extends RenamerRuleEditor {
 
 	public final static String ID = "file-utils.editors.list";
 
+	private ListRule inputRule;
+
 	public ListRuleEditor() {
 		// TODO Auto-generated constructor stub
 	}
@@ -29,37 +31,15 @@ public class ListRuleEditor extends RenamerRuleEditor {
 	@Override
 	public RenamerRule getRule() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void doSaveAs() {
-		// TODO Auto-generated method stub
-
+		return inputRule;
 	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
-	}
-
-	@Override
-	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
-		return false;
+		inputRule = ((ListRuleEditorInput) input).getRule();
+		setPartName(input.getName());
 	}
 
 	@Override

@@ -1,15 +1,29 @@
 package edu.zao.fire.editors.metadata;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPersistableElement;
 
-public class MetadataRuleEditorInput implements IEditorInput {
+import edu.zao.fire.MetadataRule;
+import edu.zao.fire.editors.RenamerRuleEditorInput;
+
+public class MetadataRuleEditorInput extends RenamerRuleEditorInput {
+
+	private final MetadataRule rule;
+
+	public MetadataRuleEditorInput() {
+		rule = new MetadataRule();
+	}
+
+	public MetadataRuleEditorInput(MetadataRule rule) {
+		this.rule = rule;
+	}
+
+	public MetadataRule getRule() {
+		return rule;
+	}
 
 	@Override
-	public boolean exists() {
-		// TODO Auto-generated method stub
-		return false;
+	public String getDefaultName() {
+		return "new Metadata Rule";
 	}
 
 	@Override
@@ -19,27 +33,8 @@ public class MetadataRuleEditorInput implements IEditorInput {
 	}
 
 	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return "This is the name of the editor input";
-	}
-
-	@Override
-	public IPersistableElement getPersistable() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getToolTipText() {
-		// TODO Auto-generated method stub
-		return "This is the tooltip for metadata rule editors.";
-	}
-
-	@Override
-	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

@@ -1,15 +1,29 @@
 package edu.zao.fire.editors.list;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPersistableElement;
 
-public class ListRuleEditorInput implements IEditorInput {
+import edu.zao.fire.ListRule;
+import edu.zao.fire.editors.RenamerRuleEditorInput;
+
+public class ListRuleEditorInput extends RenamerRuleEditorInput {
+
+	private final ListRule rule;
+
+	public ListRuleEditorInput() {
+		rule = new ListRule();
+	}
+
+	public ListRuleEditorInput(ListRule rule) {
+		this.rule = rule;
+	}
+
+	public ListRule getRule() {
+		return rule;
+	}
 
 	@Override
-	public boolean exists() {
-		// TODO Auto-generated method stub
-		return false;
+	public String getDefaultName() {
+		return "new List rule";
 	}
 
 	@Override
@@ -19,27 +33,9 @@ public class ListRuleEditorInput implements IEditorInput {
 	}
 
 	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return "The name...";
-	}
-
-	@Override
-	public IPersistableElement getPersistable() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getToolTipText() {
 		// TODO Auto-generated method stub
-		return "This is the tooltip!";
-	}
-
-	@Override
-	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

@@ -16,6 +16,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+import edu.zao.fire.MetadataRule;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.rcp.Activator;
@@ -24,7 +25,7 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 
 	public final static String ID = "file-utils.editors.metadata";
 
-	private RenamerRule rule;
+	private MetadataRule rule;
 
 	public MetadataRuleEditor() {
 		// TODO Auto-generated constructor stub
@@ -51,6 +52,8 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
+		rule = ((MetadataRuleEditorInput) input).getRule();
+		setPartName(input.getName());
 	}
 
 	@Override

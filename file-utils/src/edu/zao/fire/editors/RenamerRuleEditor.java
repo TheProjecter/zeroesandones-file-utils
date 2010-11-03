@@ -1,9 +1,13 @@
 package edu.zao.fire.editors;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.part.EditorPart;
 
 import edu.zao.fire.RenamerRule;
@@ -62,6 +66,40 @@ public abstract class RenamerRuleEditor extends EditorPart {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		System.out.println("Saving " + this + " with input " + getRule());
+
+		RenamerRuleEditorInput input = (RenamerRuleEditorInput) getEditorInput();
+		File outFile;
+		if (input.saveFile != null && input.saveFile.isFile()) {
+			outFile = input.saveFile;
+		} else {
+			FileDialog saveDialog = new FileDialog(this.getSite().getShell());
+			saveDialog.setFilterExtensions(new String[] {
+				"*.frr"
+			});
+			saveDialog.setOverwrite(true);
+			saveDialog.setText("Save Rule...");
+			String filename = saveDialog.open();
+			if (!filename.endsWith(".frr")) {
+				filename = filename + ".frr";
+			}
+			System.out.println("save to " + filename);
+			outFile = new File(filename);
+		}
+		try {
+			input.saveRuleToFile(getRule(), outFile);
+			String newTitle = outFile.getName();
+			int frrIndex = newTitle.indexOf(".frr");
+			if (frrIndex >= 0) {
+				newTitle = newTitle.substring(0, frrIndex);
+			}
+			setPartName(newTitle);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		setDirty(false);
 	}

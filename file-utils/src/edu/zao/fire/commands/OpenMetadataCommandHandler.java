@@ -8,8 +8,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import edu.zao.fire.editors.matchreplace.MatchReplaceRuleEditorInput;
 import edu.zao.fire.editors.metadata.MetadataRuleEditor;
+import edu.zao.fire.editors.metadata.MetadataRuleEditorInput;
 
 public class OpenMetadataCommandHandler extends AbstractHandler {
 
@@ -19,7 +19,7 @@ public class OpenMetadataCommandHandler extends AbstractHandler {
 		IWorkbenchPage page = window.getActivePage();
 
 		try {
-			page.openEditor(new MatchReplaceRuleEditorInput(), MetadataRuleEditor.ID);
+			page.openEditor(new MetadataRuleEditorInput(), MetadataRuleEditor.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
