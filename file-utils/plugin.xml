@@ -63,15 +63,15 @@
                   label="New..."
                   mnemonic="N">
                <command
-                     commandId="file-utils.commands.openlist"
-                     label="List Rule"
-                     mnemonic="L"
-                     style="push">
-               </command>
-               <command
                      commandId="file-utils.commands.openmatchreplace"
                      label="Match/Replace Rule"
                      mnemonic="R"
+                     style="push">
+               </command>
+               <command
+                     commandId="file-utils.commands.openlist"
+                     label="List Rule"
+                     mnemonic="L"
                      style="push">
                </command>
                <command
@@ -81,6 +81,18 @@
                      style="push">
                </command>
             </menu>
+            <command
+                  commandId="file-utils.commands.openRule"
+                  label="Open"
+                  mnemonic="O"
+                  style="push">
+            </command>
+            <command
+                  commandId="file-utils.commands.saveCurrentEditor"
+                  label="Save"
+                  mnemonic="S"
+                  style="push">
+            </command>
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit"
@@ -93,51 +105,55 @@
          <toolbar
                id="file-utils.toolbar2">
             <command
-                  commandId="file-utils.commands.openmatchreplace"
-                  icon="IMG_TOOL_NEW_WIZARD"
-                  id="file-utils.toolbar.new.dropdown"
-                  style="pulldown"
-                  tooltip="New Match/Replace Rule">
-            </command>
-            <command
                   commandId="file-utils.commands.openRule"
-                  icon="IMG_OBJ_FOLDER"
                   id="file-utils.toolbar.open"
                   style="push">
             </command>
             <command
                   commandId="file-utils.commands.saveCurrentEditor"
-                  icon="IMG_ETOOL_SAVE_EDIT"
                   id="file-utils.toolbar.save"
                   style="push"
                   tooltip="Save Current Rule">
             </command>
          </toolbar>
+         <toolbar
+               id="file-utils.toolbar1">
+            <command
+                  commandId="file-utils.commands.openlist"
+                  id="file-utils.toolbar.newlistrule"
+                  style="push"
+                  tooltip="New List Rule">
+            </command>
+            <command
+                  commandId="file-utils.commands.openmatchreplace"
+                  id="file-utils.toolbar.newmatchreplace"
+                  style="push"
+                  tooltip="New Match/Replace Rule">
+            </command>
+            <command
+                  commandId="file-utils.commands.openmetadata"
+                  id="file-utils.toolbar.newmetadata"
+                  style="push"
+                  tooltip="New Metadata Rule">
+            </command>
+         </toolbar>
       </menuContribution>
-      <menuContribution
-            locationURI="menu:file-utils.toolbar.new.dropdown">
-         <command
-               commandId="file-utils.commands.openlist"
-               icon="IMG_TOOL_NEW_WIZARD"
-               id="file-utils.toolbar.newlistrule"
-               style="push"
-               tooltip="New List Rule">
-         </command>
-         <command
-               commandId="file-utils.commands.openmatchreplace"
-               icon="IMG_TOOL_NEW_WIZARD"
-               id="file-utils.toolbar.newmatchreplace"
-               style="push"
-               tooltip="New Match/Replace Rule">
-         </command>
-         <command
-               commandId="file-utils.commands.openmetadata"
-               icon="IMG_TOOL_NEW_WIZARD"
-               id="file-utils.toolbar.newmetadata"
-               style="push"
-               tooltip="New Metadata Rule">
-         </command>
-      </menuContribution>
+   </extension>
+   <extension
+         id="linuxProduct"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="file-utils.application"
+            name="DeployTest">
+         <property
+               name="windowImages"
+               value="icons/flame-16.png,icons/flame-32.png,icons/flame-48.png,icons/flame-64.png,icons/flame-128.png">
+         </property>
+         <property
+               name="appName"
+               value="DeployTest">
+         </property>
+      </product>
    </extension>
    <extension
          id="product"
@@ -160,18 +176,21 @@
       <editor
             class="edu.zao.fire.editors.matchreplace.MatchReplaceRuleEditor"
             default="false"
+            icon="icons/matchReplaceIcon.png"
             id="file-utils.editors.matchreplace"
             name="Match/Replace Rule">
       </editor>
       <editor
             class="edu.zao.fire.editors.metadata.MetadataRuleEditor"
             default="false"
+            icon="icons/metadataIcon.png"
             id="file-utils.editors.metadata"
             name="Metadata Rule">
       </editor>
       <editor
             class="edu.zao.fire.editors.list.ListRuleEditor"
             default="false"
+            icon="icons/listIcon.png"
             id="file-utils.editors.list"
             name="List Rule">
       </editor>
@@ -223,20 +242,27 @@
       </handler>
    </extension>
    <extension
-         id="linuxProduct"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="file-utils.application"
-            name="DeployTest">
-         <property
-               name="windowImages"
-               value="icons/flame-16.png,icons/flame-32.png,icons/flame-48.png,icons/flame-64.png,icons/flame-128.png">
-         </property>
-         <property
-               name="appName"
-               value="DeployTest">
-         </property>
-      </product>
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="file-utils.commands.openlist"
+            icon="icons/newListIcon.png">
+      </image>
+      <image
+            commandId="file-utils.commands.openmatchreplace"
+            icon="icons/newMatchReplaceIcon.png">
+      </image>
+      <image
+            commandId="file-utils.commands.openmetadata"
+            icon="icons/newMetadataIcon.png">
+      </image>
+      <image
+            commandId="file-utils.commands.openRule"
+            icon="IMG_OBJ_FOLDER">
+      </image>
+      <image
+            commandId="file-utils.commands.saveCurrentEditor"
+            icon="IMG_ETOOL_SAVE_EDIT">
+      </image>
    </extension>
 
 </plugin>
