@@ -119,16 +119,16 @@
          <toolbar
                id="file-utils.toolbar1">
             <command
-                  commandId="file-utils.commands.openlist"
-                  id="file-utils.toolbar.newlistrule"
-                  style="push"
-                  tooltip="New List Rule">
-            </command>
-            <command
                   commandId="file-utils.commands.openmatchreplace"
                   id="file-utils.toolbar.newmatchreplace"
                   style="push"
                   tooltip="New Match/Replace Rule">
+            </command>
+            <command
+                  commandId="file-utils.commands.openlist"
+                  id="file-utils.toolbar.newlistrule"
+                  style="push"
+                  tooltip="New List Rule">
             </command>
             <command
                   commandId="file-utils.commands.openmetadata"
@@ -168,6 +168,10 @@
          <property
                name="windowImages"
                value="icons/flame-16.png,icons/flame-32.png,icons/flame-48.png,icons/flame-64.png,icons/flame-128.png">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>
@@ -263,6 +267,49 @@
             commandId="file-utils.commands.saveCurrentEditor"
             icon="IMG_ETOOL_SAVE_EDIT">
       </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <scheme
+            id="file-utils.binding.scheme"
+            name="Key Binding Scheme">
+      </scheme>
+      <key
+            commandId="file-utils.commands.saveCurrentEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="file-utils.binding.scheme"
+            sequence="M1+S">
+      </key>
+      <key
+            commandId="file-utils.commands.openRule"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="file-utils.binding.scheme"
+            sequence="M1+O">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.exit"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="file-utils.binding.scheme"
+            sequence="M1+Q">
+      </key>
+      <key
+            commandId="file-utils.commands.openmatchreplace"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="file-utils.binding.scheme"
+            sequence="M1+1">
+      </key>
+      <key
+            commandId="file-utils.commands.openlist"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="file-utils.binding.scheme"
+            sequence="M1+2">
+      </key>
+      <key
+            commandId="file-utils.commands.openmetadata"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="file-utils.binding.scheme"
+            sequence="M1+3">
+      </key>
    </extension>
 
 </plugin>
