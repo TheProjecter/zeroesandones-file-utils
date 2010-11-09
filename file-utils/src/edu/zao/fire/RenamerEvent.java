@@ -1,7 +1,6 @@
 package edu.zao.fire;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,15 +60,14 @@ public class RenamerEvent {
 		for (Iterator<RenamedFile> p = filesList.iterator(); p.hasNext();) {
 			RenamedFile temp = p.next();
 			File toBeChanged = new File(temp.beforeFullPath);
-			if(!toBeChanged.exists()){
+			if (!toBeChanged.exists()) {
 				// TODO: Throw an exception because the files not there
-			}
-			else{
-				File newFile = new File(temp.afterFullPath)
+			} else {
+				File newFile = new File(temp.afterFullPath);
 				boolean success = toBeChanged.renameTo(newFile);
-				if(!success){
+				if (!success) {
 					System.err.println("Could not rename " + toBeChanged);
-				}				
+				}
 			}
 		}
 	}
