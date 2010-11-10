@@ -1,14 +1,19 @@
 package edu.zao.fire.editors.metadata;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
 
 public class MetadataTagList {
 
@@ -31,7 +36,7 @@ public class MetadataTagList {
 		return tags.toArray();
 	}
 
-	public void createMetadataMap(File inputSong) {
+	public void createMetadataMap(File inputSong) throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 
 		final Map<String, String> metadataMap = new TreeMap<String, String>();
 
