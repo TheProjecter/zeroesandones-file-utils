@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class ListRule implements RenamerRule {
-	// TODO: getAlphabetical
 
 	/**
 	 * A generated serial ID
@@ -24,7 +23,6 @@ public class ListRule implements RenamerRule {
 	private int digitsDisplayed = 1;
 
 	@Override
-	// TODO: Need a decimal to Roman numeral converter
 	// (http://www.roseindia.net/java/java-tips/45examples/misc/roman/roman.shtml)
 	public String getNewName(File file) throws IOException {
 		String numeral = "";

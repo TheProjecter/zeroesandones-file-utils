@@ -1,11 +1,11 @@
 package edu.zao.fire;
 
 public class RenamedFile {
-	public String beforeFullPath;
-	public String afterFullPath;
+	private String beforeFullPath = "";
+	private String afterFullPath = "";
 
 	/**
-	 * A helper class for the Renamer history, stores before and after paths
+	 * A helper class for the RenamerHistory, stores before and after paths
 	 * 
 	 * @param beforeFullPath
 	 *            Is the full canonical path to the file before its change
@@ -17,7 +17,23 @@ public class RenamedFile {
 		this.afterFullPath = afterFullPath;
 	}
 
+	public void setBeforePath(String beforeFullPath) {
+		this.beforeFullPath = beforeFullPath;
+	}
+
+	public void setAfterPath(String afterFullPath) {
+		this.afterFullPath = afterFullPath;
+	}
+
+	public String getBeforePath() {
+		return beforeFullPath;
+	}
+
+	public String getAfterPath() {
+		return afterFullPath;
+	}
+
 	public RenamedFile() {
-		// TODO Auto-generated constructor stub
+
 	}
 };

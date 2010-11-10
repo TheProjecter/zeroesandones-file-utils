@@ -57,6 +57,10 @@ public class BrowserView extends ViewPart {
 
 	private Button applyButton;
 
+	private Button undoButton;
+
+	private Button redoButton;
+
 	/**
 	 * Constructor. Initializes the internal renamer instance at the user's home
 	 * directory. This function should not be called by the client- the class is
@@ -132,10 +136,10 @@ public class BrowserView extends ViewPart {
 		bottomBarArea.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 
 		// add undo/redo buttons
-		Button undoButton = new Button(bottomBarArea, SWT.PUSH);
+		undoButton = new Button(bottomBarArea, SWT.PUSH);
 		undoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_UNDO));
 
-		Button redoButton = new Button(bottomBarArea, SWT.PUSH);
+		redoButton = new Button(bottomBarArea, SWT.PUSH);
 		redoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_REDO));
 
 		applyButton = new Button(bottomBarArea, SWT.PUSH);
@@ -219,6 +223,18 @@ public class BrowserView extends ViewPart {
 	 * Buttons, Text Fields, etc.
 	 */
 	private void addListeners() {
+		undoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				renamer.undoRenamerEvent();
+			}
+		});
+		redoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				renamer.redoRenamerEvent();
+			}
+		});
 		// create the "Up one level" listener
 		browserUpLevelButton.addSelectionListener(new SelectionAdapter() {
 			@Override

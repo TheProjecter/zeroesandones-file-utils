@@ -40,11 +40,11 @@ public class RenamerEvent {
 		// For each file in the list of Files
 		for (Iterator<RenamedFile> p = filesList.iterator(); p.hasNext();) {
 			RenamedFile temp = p.next();
-			File toBeChanged = new File(temp.afterFullPath);
+			File toBeChanged = new File(temp.getAfterPath());
 			if (!toBeChanged.exists()) {
-				// TODO: Throw an exception because the files not there.
+				System.err.println("Could not undo changes to file: " + temp.getAfterPath() + ", File does not exist!\n");
 			} else {
-				File newFile = new File(temp.beforeFullPath);
+				File newFile = new File(temp.getBeforePath());
 				boolean success = toBeChanged.renameTo(newFile);
 				if (!success) {
 					System.err.println("Could not rename " + toBeChanged);
@@ -59,11 +59,11 @@ public class RenamerEvent {
 	public void redo() {
 		for (Iterator<RenamedFile> p = filesList.iterator(); p.hasNext();) {
 			RenamedFile temp = p.next();
-			File toBeChanged = new File(temp.beforeFullPath);
+			File toBeChanged = new File(temp.getBeforePath());
 			if (!toBeChanged.exists()) {
 				// TODO: Throw an exception because the files not there
 			} else {
-				File newFile = new File(temp.afterFullPath);
+				File newFile = new File(temp.getAfterPath());
 				boolean success = toBeChanged.renameTo(newFile);
 				if (!success) {
 					System.err.println("Could not rename " + toBeChanged);
