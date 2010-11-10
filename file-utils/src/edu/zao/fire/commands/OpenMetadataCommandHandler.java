@@ -11,8 +11,19 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import edu.zao.fire.editors.metadata.MetadataRuleEditor;
 import edu.zao.fire.editors.metadata.MetadataRuleEditorInput;
 
+/**
+ * Command invoked by the Eclipse RCP framework (as set up in plugin.xml)
+ * whenever the user selects the "New Metadata Rule" option from the menu or the
+ * toolbar.
+ * 
+ * @author Dylan
+ */
 public class OpenMetadataCommandHandler extends AbstractHandler {
 
+	/**
+	 * Opens a new MetadataRuleEditor in the UI, with a brand new
+	 * MetadataEditorInput.
+	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);

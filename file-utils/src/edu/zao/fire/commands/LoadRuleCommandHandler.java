@@ -23,16 +23,29 @@ import edu.zao.fire.editors.matchreplace.MatchReplaceRuleEditorInput;
 import edu.zao.fire.editors.metadata.MetadataRuleEditor;
 import edu.zao.fire.editors.metadata.MetadataRuleEditorInput;
 
+/**
+ * The command that is executed when the
+ * <code>file-utils.commands.openRule</code> command is called through the
+ * Eclipse RCP framework. (see plugin.xml)
+ * 
+ * @author Dylan
+ * 
+ */
 public class LoadRuleCommandHandler extends AbstractHandler {
 
+	/**
+	 * Opens a file dialog and asks the user to select a ".frr" (file renamer
+	 * rule) file. If a file is selected, the UI will attempt to open the
+	 * appropriate RenamerRuleEditor for that file's renamer rule.
+	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		// TODO: potential cleanup by splitting this function up
+
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
 		FileDialog fd = new FileDialog(window.getShell());
-		fd.setFilterExtensions(new String[] {
-			"*.frr"
-		});
+		fd.setFilterExtensions(new String[] { "*.frr" });
 		fd.setText("Load Renaming Rule...");
 		String filename = fd.open();
 		if (filename != null) {

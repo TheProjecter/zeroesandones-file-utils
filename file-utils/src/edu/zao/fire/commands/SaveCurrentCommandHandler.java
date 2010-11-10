@@ -14,6 +14,13 @@ import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
 import edu.zao.fire.rcp.Activator;
 
+/**
+ * Command handler for the "Save" command. The handler handles the execution of
+ * the command as well as deciding whether the command is enabled at any given
+ * time.
+ * 
+ * @author Dylan
+ */
 public class SaveCurrentCommandHandler extends AbstractHandler implements ActiveEditorListener, RenamerRuleChangeListener {
 
 	private final Set<RenamerRuleEditor> editorsObserved = new HashSet<RenamerRuleEditor>();
@@ -30,12 +37,9 @@ public class SaveCurrentCommandHandler extends AbstractHandler implements Active
 		return null;
 	}
 
-	// @Override
-	// protected void fireHandlerChanged(HandlerEvent handlerEvent) {
-	// // TODO Auto-generated method stub
-	// super.fireHandlerChanged(handlerEvent);
-	// }
-
+	/**
+	 * The save command is enabled whenever there is a dirty active editor.
+	 */
 	@Override
 	public boolean isEnabled() {
 		RenamerRuleEditor editor = Activator.getDefault().getEditorManager().getActiveEditor();
@@ -45,6 +49,12 @@ public class SaveCurrentCommandHandler extends AbstractHandler implements Active
 		return editor.isDirty();
 	}
 
+	/**
+	 * Checks if the newActiveEditor is an editor that this handler has not
+	 * subscribed to, and if so it registers itself as a listener, so that it
+	 * will be notified whenever that editor becomes dirty (thereby enabling the
+	 * save command).
+	 */
 	@Override
 	public void activeEditorChanged(RenamerRuleEditor newActiveEditor) {
 		if (newActiveEditor != null) {
@@ -56,8 +66,12 @@ public class SaveCurrentCommandHandler extends AbstractHandler implements Active
 		fireHandlerChanged(new HandlerEvent(this, true, false));
 	}
 
+	/**
+	 * Fire a handler event that says that the "enabled" state has changed
+	 */
 	@Override
 	public void ruleChanged(RenamerRule rule) {
+		// fire a handler event that says that the "enabled" state has changed
 		fireHandlerChanged(new HandlerEvent(this, true, false));
 	}
 }

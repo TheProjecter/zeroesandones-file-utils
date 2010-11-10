@@ -7,6 +7,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import edu.zao.fire.MatchReplaceRule;
 import edu.zao.fire.editors.RenamerRuleEditorInput;
 
+/**
+ * Editor Input class for the MatchReplaceRuleEditor.
+ * 
+ * @author Dylan
+ */
 public class MatchReplaceRuleEditorInput extends RenamerRuleEditorInput {
 
 	private final MatchReplaceRule rule;
@@ -20,6 +25,10 @@ public class MatchReplaceRuleEditorInput extends RenamerRuleEditorInput {
 		this.saveFile = saveFile;
 	}
 
+	/**
+	 * @return A reference to the RenamerRule that this editor input
+	 *         encapsulates
+	 */
 	public MatchReplaceRule getRule() {
 		return rule;
 	}
@@ -32,12 +41,12 @@ public class MatchReplaceRuleEditorInput extends RenamerRuleEditorInput {
 
 	@Override
 	public String getDefaultName() {
-		// TODO Auto-generated method stub
 		return "new Match/Replace rule";
 	}
 
 	@Override
 	public String getToolTipText() {
+		// no tooltip is provided
 		return "";
 	}
 

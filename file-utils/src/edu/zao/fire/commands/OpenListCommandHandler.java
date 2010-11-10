@@ -11,8 +11,18 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import edu.zao.fire.editors.list.ListRuleEditor;
 import edu.zao.fire.editors.list.ListRuleEditorInput;
 
+/**
+ * Command invoked by the Eclipse RCP framework (as set up in plugin.xml)
+ * whenever the user selects the "New List Rule" option from the menu or the
+ * toolbar.
+ * 
+ * @author Dylan
+ */
 public class OpenListCommandHandler extends AbstractHandler {
 
+	/**
+	 * Opens a new ListRuleEditor in the UI, with a brand new ListEditorInput.
+	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);

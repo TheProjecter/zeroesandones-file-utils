@@ -25,6 +25,11 @@ import edu.zao.fire.MatchReplaceRule.ReplacementLimit;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
 
+/**
+ * User Interface for editing Match/Replace RenamerRules.
+ * 
+ * @author Dylan
+ */
 public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 	public final static String ID = "file-utils.editors.matchreplace";
 
@@ -60,6 +65,10 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		return inputRule;
 	}
 
+	/**
+	 * Grabs the given <code>input</code> and sets the title tab's text to
+	 * whatever that input says it should be.
+	 */
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
@@ -68,6 +77,10 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		setPartName(input.getName());
 	}
 
+	/**
+	 * Sets all of the UI components' selections to whatever matches the current
+	 * state of this editor's RenamerRule.
+	 */
 	private void selectRuleConfigurationInUI() {
 		matchText.setText(inputRule.getMatchString());
 		replaceText.setText(inputRule.getReplaceString());
@@ -159,6 +172,10 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		addRuleModificationListeners();
 	}
 
+	/**
+	 * Add listeners to all of the UI components that allow the user to change
+	 * the RenamerRule.
+	 */
 	private void addRuleModificationListeners() {
 		// listener to update the status of the rule's MATCH text
 		ModifyListener matchModifiedListener = new ModifyListener() {
@@ -227,6 +244,14 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		radioDontCareCaps.addSelectionListener(capitalizationRadioAdapter);
 	}
 
+	/**
+	 * Helper class that acts as a smart listener to the Capitalization Radio
+	 * Buttons. This listener will be common to each button, but depending on
+	 * which one of them was pressed, this listener will figure out which
+	 * capitalization state to assign.
+	 * 
+	 * @author Dylan
+	 */
 	private class CapitalizationRadioButtonSelectionAdapter extends SelectionAdapter {
 		private final Map<Button, CapitalizationStyle> styleForButton = new HashMap<Button, CapitalizationStyle>();
 
