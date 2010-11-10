@@ -68,20 +68,22 @@ public class ListRule implements RenamerRule {
 		return output;
 	}
 
-	// http://stackoverflow.com/questions/342052/how-to-increment-a-java-string-through-all-the-possibilities
 	private String getAlphabetical() {
 		int num = counter;
-		if (num < 0) {
-			throw new IllegalArgumentException("Only positive numbers are supported");
+		String s = new String("");
+		for (int i = 6; i >= 0; i--) {
+			int divisor = (int) Math.pow(26, i);
+			char alpha = 'a';
+			if ((num / divisor) != 0) {
+				while ((num - divisor) > 0) {
+					num = num - divisor;
+					alpha++;
+				}
+				s = s + alpha;
+			}
 		}
-		StringBuilder s = new StringBuilder("");
-		for (int i = 0; i <= digitsDisplayed; i++) {
-			s.append("a");
-		}
-		for (int pos = digitsDisplayed; pos >= 0 && num > 0; pos--) {
-			char digit = (char) ('a' + num % 26);
-			s.setCharAt(pos, digit);
-			num = num / 26;
+		while (s.length() < digitsDisplayed) {
+			s = "a" + s.toString();
 		}
 		return s.toString();
 	}
