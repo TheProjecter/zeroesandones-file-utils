@@ -11,7 +11,7 @@ public class ListRule implements RenamerRule {
 	 */
 	private static final long serialVersionUID = 5732001028450514775L;
 	private boolean isAscending = true;
-	private boolean isAddToEnd = true;
+	private boolean isAddToEnd = false;
 	private String seperatorToken = "-";
 	private int startFrom = 1;
 	private int counter = 0;
