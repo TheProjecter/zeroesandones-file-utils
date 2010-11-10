@@ -2,6 +2,15 @@ package edu.zao.fire.views.browser.urlassist;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 
+/**
+ * Helper class for the text helper popup on the URL bar. A URLContentProposal
+ * consists of a string to be chosen by the user, and another string that
+ * represents the actual text content to be added when the user picks this
+ * proposal.
+ * 
+ * @author Dylan
+ * 
+ */
 public class URLContentProposal implements IContentProposal {
 
 	private final String url;
@@ -24,7 +33,7 @@ public class URLContentProposal implements IContentProposal {
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
+		// by returning something non-null here, a tooltip text box will pop up
 		return null;
 	}
 

@@ -10,6 +10,12 @@ import org.eclipse.ui.PlatformUI;
 
 import edu.zao.fire.Renamer;
 
+/**
+ * Label provider that decides the text, styling, and image for cells in the
+ * Browser table viewer.
+ * 
+ * @author Dylan
+ */
 public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 
 	private final Renamer renamer;
@@ -18,6 +24,10 @@ public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 		this.renamer = renamer;
 	}
 
+	/**
+	 * Updates the label for the given <code>cell</code>. Sets the text and
+	 * image to whatever it deems necessary.
+	 */
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
@@ -29,6 +39,18 @@ public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 		cell.setImage(cellImage);
 	}
 
+	/**
+	 * Get the text for the given element at the given column. For the first
+	 * column, the file's name is the text. For the second column, the file's
+	 * new name according to the renamer is the text.
+	 * 
+	 * @param element
+	 *            An File that is being represented by a row in the browser
+	 *            table.
+	 * @param columnIndex
+	 *            The column of the File's row.
+	 * @return The appropriate text for the given File in the given column.
+	 */
 	private String getCellText(Object element, int columnIndex) {
 		if (!(element instanceof File)) {
 			throw new IllegalArgumentException("element must be a File");
@@ -44,6 +66,16 @@ public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 		}
 	}
 
+	/**
+	 * Gets the image to display for the given File (<code>element</code>) and
+	 * the given column. Directories get a "folder" icon, other files get a
+	 * "text file" icon, and strange files get a generic "object" icon. Icons
+	 * are only assigned in the first column.
+	 * 
+	 * @param element
+	 * @param columnIndex
+	 * @return The icon to display for the given File.
+	 */
 	private Image getCellImage(Object element, int columnIndex) {
 		if (columnIndex != 0) {
 			return null;

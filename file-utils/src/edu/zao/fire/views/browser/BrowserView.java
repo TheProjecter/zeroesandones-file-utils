@@ -57,12 +57,21 @@ public class BrowserView extends ViewPart {
 
 	private Button applyButton;
 
+	/**
+	 * Constructor. Initializes the internal renamer instance at the user's home
+	 * directory. This function should not be called by the client- the class is
+	 * initialized through Eclipse RCP and the perspective associated with FiRE.
+	 */
 	public BrowserView() {
 		String userHomePath = System.getProperty("user.home");
 		File userHome = new File(userHomePath);
 		renamer.setCurrentDirectory(userHome);
 	}
 
+	/**
+	 * Initialize all the User Interface components within this BrowserView.
+	 * This function is called by Eclipse RCP at initialization time.
+	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
@@ -146,6 +155,12 @@ public class BrowserView extends ViewPart {
 		sendBrowserToLocation(renamer.getCurrentDirectory());
 	}
 
+	/**
+	 * Create the browser area and the listeners associated with it.
+	 * 
+	 * @param parent
+	 *            The parent Composite that the browser area will be created in.
+	 */
 	private void createBrowserTableViewer(Composite parent) {
 		// create the table viewer for the browser
 		browserTableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -199,6 +214,10 @@ public class BrowserView extends ViewPart {
 
 	}
 
+	/**
+	 * Add listeners that will monitor and affect the state of the browser.
+	 * Buttons, Text Fields, etc.
+	 */
 	private void addListeners() {
 		// create the "Up one level" listener
 		browserUpLevelButton.addSelectionListener(new SelectionAdapter() {
@@ -341,6 +360,10 @@ public class BrowserView extends ViewPart {
 		}
 	}
 
+	/**
+	 * Update the status of the "Back" and "Forward" buttons so that they will
+	 * only be active if the URL history can go in that direction.
+	 */
 	private void updateNavigationButtonStatus() {
 		boolean canGoBack = urlHistory.canRegressHistory();
 		boolean canGoFront = urlHistory.canProgressHistory();
@@ -350,8 +373,7 @@ public class BrowserView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		// nothing needs to happen here
 	}
 
 }

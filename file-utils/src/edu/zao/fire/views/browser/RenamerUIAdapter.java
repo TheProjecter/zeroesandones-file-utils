@@ -8,6 +8,12 @@ import edu.zao.fire.editors.RenamerRuleEditorManager;
 import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
 import edu.zao.fire.rcp.Activator;
 
+/**
+ * Helper class that attaches a renamer instance to an editor (as a Listener)
+ * whenever the active editor is changed.
+ * 
+ * @author Dylan
+ */
 public class RenamerUIAdapter implements ActiveEditorListener {
 
 	/**

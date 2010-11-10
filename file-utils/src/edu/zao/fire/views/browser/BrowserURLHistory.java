@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * A BrowserURLHistory keeps track of the locations that the user has visited,
+ * in order. Locations are stored as a String, representing the file path (or
+ * "url"). The history may be stepped back and forth, updating internal state
+ * automatically.
+ * 
+ * @author Dylan, Chris
+ */
 public class BrowserURLHistory {
 	private final ArrayList<String> currentHistorySequence = new ArrayList<String>();
 	private final Set<String> visitedLocations = new TreeSet<String>();
-	/**
-	 * probably want to maintain an int for current location url is a string,
-	 * coming from the file view add a method that returns the current location
-	 * url(in history/action/time) only need to save up to 256 urls and thus,
-	 * Chris began his adventure in Java.....
-	 */
 
 	private int currentHistoryLocation = -1;
 
@@ -101,6 +103,10 @@ public class BrowserURLHistory {
 		return currentHistorySequence.get(currentHistoryLocation);
 	}
 
+	/**
+	 * Debug Print method. Prints out all urls that are currently held in the
+	 * history, with angle brackets "<" and ">" around the current location.
+	 */
 	private void debugPrintHistory() {
 		System.out.print("History:\t");
 		for (int i = 0; i < currentHistorySequence.size(); i++) {

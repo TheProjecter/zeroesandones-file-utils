@@ -9,10 +9,22 @@ import org.eclipse.jface.viewers.Viewer;
 
 import edu.zao.fire.Renamer;
 
+/**
+ * Content Provider class that interprets the input to the Browser Table viewer
+ * and returns a list of object that can be displayed within the browser. These
+ * objects are in turn passed to the {@link BrowserTableItemSorter} and
+ * {@link BrowserTableLabelProvider} to determine display qualities and order.
+ * 
+ * @author Dylan
+ */
 public class BrowserTableContentProvider implements IStructuredContentProvider {
 
 	Renamer input;
 
+	/**
+	 * Returns an array of the files that are considered local to the renamer's
+	 * current directory.
+	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
 		List<File> elements = new ArrayList<File>();
