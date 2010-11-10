@@ -1,6 +1,10 @@
 package edu.zao.fire.editors.list;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -14,6 +18,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
 import edu.zao.fire.ListRule;
+import edu.zao.fire.ListRule.ListStyle;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.rcp.Activator;
@@ -23,6 +28,17 @@ public class ListRuleEditor extends RenamerRuleEditor {
 	public final static String ID = "file-utils.editors.list";
 
 	private ListRule inputRule;
+
+	private Button radioAscending;
+	private Button radioDescending;
+	private Button radioAlphabetical;
+	private Button radioNumerical;
+	private Button radioRoman;
+	private Button radioAddToStart;
+	private Button radioAddToEnd;
+	private Text startFrom;
+	private Text seperatorToken;
+	private Spinner numDigitsSpinner;
 
 	public ListRuleEditor() {
 		// TODO Auto-generated constructor stub
@@ -51,11 +67,11 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		topArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		topArea.setLayout(new FillLayout());
 
-		Button ascendingRadio = new Button(topArea, SWT.RADIO);
-		ascendingRadio.setText("Ascending");
+		radioAscending = new Button(topArea, SWT.RADIO);
+		radioAscending.setText("Ascending");
 
-		Button descendingRadio = new Button(topArea, SWT.RADIO);
-		descendingRadio.setText("Descending");
+		radioDescending = new Button(topArea, SWT.RADIO);
+		radioDescending.setText("Descending");
 
 		// create a separator below the topArea
 		Label topSeparator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -80,30 +96,30 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		typeRadioArea.setLayoutData(typeRadioAreaData);
 
 		// create the type radio buttons
-		Button typeABCRadio = new Button(typeRadioArea, SWT.RADIO);
-		typeABCRadio.setText("a, b, c...");
+		radioAlphabetical = new Button(typeRadioArea, SWT.RADIO);
+		radioAlphabetical.setText("a, b, c...");
 
-		Button type123Radio = new Button(typeRadioArea, SWT.RADIO);
-		type123Radio.setText("1, 2, 3...");
+		radioNumerical = new Button(typeRadioArea, SWT.RADIO);
+		radioNumerical.setText("1, 2, 3...");
 
-		Button typeiiiRadio = new Button(typeRadioArea, SWT.RADIO);
-		typeiiiRadio.setText("i, ii, iii...");
+		radioRoman = new Button(typeRadioArea, SWT.RADIO);
+		radioRoman.setText("i, ii, iii...");
 
 		// create the "Start From" label and spinner(?)
 		Label startFromLabel = new Label(midArea, SWT.SINGLE);
 		startFromLabel.setText("Start from: ");
 		startFromLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 
-		Text startFromText = new Text(midArea, SWT.SINGLE | SWT.BORDER);
+		startFrom = new Text(midArea, SWT.SINGLE | SWT.BORDER);
 		GridData startFromTextData = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		startFromText.setLayoutData(startFromTextData);
+		startFrom.setLayoutData(startFromTextData);
 
 		// create the number of digits label and spinner
 		Label numDigitsLabel = new Label(midArea, SWT.SINGLE);
 		numDigitsLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
 		numDigitsLabel.setText("Digits Displayed: ");
 
-		Spinner numDigitsSpinner = new Spinner(midArea, SWT.WRAP | SWT.BORDER);
+		numDigitsSpinner = new Spinner(midArea, SWT.WRAP | SWT.BORDER);
 		numDigitsSpinner.setValues(0, 0, 6, 0, 1, 1);
 		numDigitsSpinner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
@@ -123,10 +139,10 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		Label addToLabel = new Label(bottomArea, SWT.SINGLE);
 		addToLabel.setText("Add to:");
 
-		Button addToStartRadio = new Button(bottomArea, SWT.RADIO);
-		addToStartRadio.setText("Start");
-		Button addToEndRadio = new Button(bottomArea, SWT.RADIO);
-		addToEndRadio.setText("End");
+		radioAddToStart = new Button(bottomArea, SWT.RADIO);
+		radioAddToStart.setText("Start");
+		radioAddToEnd = new Button(bottomArea, SWT.RADIO);
+		radioAddToEnd.setText("End");
 
 		// create another bottom area...
 		Composite bottomArea2 = new Composite(parent, SWT.NONE);
@@ -137,9 +153,109 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		Label sepWithLabel = new Label(bottomArea2, SWT.SINGLE);
 		sepWithLabel.setText("Separate with: ");
 		//
-		Text sepWithText = new Text(bottomArea2, SWT.SINGLE | SWT.BORDER);
+		seperatorToken = new Text(bottomArea2, SWT.SINGLE | SWT.BORDER);
 		// sepWithText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
 		// false));
+
+		selectRuleConfigurationInUI();
+
+		addRuleModificationListeners();
+	}
+
+	private void addRuleModificationListeners() {
+		ModifyListener numDigitsListener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				inputRule.setDigitsDisplayed(numDigitsSpinner.getSelection());
+				fireRuleChanged(inputRule);
+			}
+		};
+		numDigitsSpinner.addModifyListener(numDigitsListener);
+		ModifyListener startFromModifiedListener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				inputRule.setSeperatorToken(startFrom.getText());
+				fireRuleChanged(inputRule);
+			}
+		};
+		startFrom.addModifyListener(startFromModifiedListener);
+		ModifyListener seperatorTokenModifiedListener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				inputRule.setSeperatorToken(seperatorToken.getText());
+				fireRuleChanged(inputRule);
+			}
+		};
+		seperatorToken.addModifyListener(seperatorTokenModifiedListener);
+		SelectionAdapter ascendingListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputRule.setAscending(true);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioAscending.addSelectionListener(ascendingListener);
+		SelectionAdapter descendingListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputRule.setAscending(false);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioDescending.addSelectionListener(descendingListener);
+		SelectionAdapter alphabeticalListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputRule.setListStyleState(ListStyle.ALPHABETICAL);
+				numDigitsSpinner.setEnabled(true);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioAlphabetical.addSelectionListener(alphabeticalListener);
+		SelectionAdapter numericalListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				numDigitsSpinner.setEnabled(true);
+				inputRule.setListStyleState(ListStyle.NUMERIC);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioNumerical.addSelectionListener(numericalListener);
+		SelectionAdapter romanListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				numDigitsSpinner.setEnabled(false);
+				inputRule.setListStyleState(ListStyle.ROMAN_NUMERALS);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioRoman.addSelectionListener(romanListener);
+		SelectionAdapter addToStartListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputRule.setAddToEnd(false);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioAddToStart.addSelectionListener(addToStartListener);
+		SelectionAdapter addToEndListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputRule.setAddToEnd(true);
+				fireRuleChanged(inputRule);
+			}
+		};
+		radioAddToEnd.addSelectionListener(addToEndListener);
+	}
+
+	private void selectRuleConfigurationInUI() {
+		radioAscending.setSelection(inputRule.isAscending());
+		radioDescending.setSelection(!inputRule.isAscending());
+		radioAlphabetical.setSelection(inputRule.getListStyleState() == ListStyle.ALPHABETICAL);
+		radioNumerical.setSelection(inputRule.getListStyleState() == ListStyle.NUMERIC);
+		radioRoman.setSelection(inputRule.getListStyleState() == ListStyle.ROMAN_NUMERALS);
+		radioAddToStart.setSelection(!inputRule.isAddToEnd());
+		radioAddToEnd.setSelection(inputRule.isAddToEnd());
+		startFrom.setText(Integer.toString(inputRule.getStartFrom()));
+		seperatorToken.setText(inputRule.getSeperatorToken());
+
 	}
 
 	@Override

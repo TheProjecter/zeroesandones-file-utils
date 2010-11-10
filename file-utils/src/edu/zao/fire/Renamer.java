@@ -23,6 +23,7 @@ import edu.zao.fire.util.FileGatherer;
 public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener {
 	private RenamerRule currentRule;
 	private File currentDirectory;
+	private RenamerHistory renamingHistory;
 	private final List<File> localFiles = new ArrayList<File>();
 
 	/**
@@ -118,27 +119,32 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	 */
 	public void applyChanges() {
 		// TODO: add a naming conflict check
+		RenamerEvent newEvent = new RenamerEvent();
 		for (File file : localFiles) {
 			try {
 				String currentName = file.getName();
 				String newName = newNamesMap.get(currentName);
 
 				if (!currentName.equals(newName)) {
+					RenamedFile newRenamedFile = new RenamedFile();
 					String fullName = file.getCanonicalPath();
+					newRenamedFile.beforeFullPath = fullName;
 					int fileNameIndex = fullName.lastIndexOf(file.getName());
 					fullName = fullName.substring(0, fileNameIndex) + newName;
-
 					File newFile = new File(fullName);
+					newRenamedFile.afterFullPath = fullName;
 					boolean success = file.renameTo(newFile);
 					if (!success) {
 						System.err.println("Could not rename " + file);
 					}
+					newEvent.addRenamedFile(newRenamedFile);
 				}
 			} catch (IOException e) {
 				// tell the error listeners that something went wrong
 				fireEvent(EventType.IOException, file, currentRule);
 			}
 		}
+		renamingHistory.addRenamerEvent(newEvent);
 		setCurrentDirectory(currentDirectory);
 	}
 

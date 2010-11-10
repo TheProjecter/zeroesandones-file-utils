@@ -16,4 +16,8 @@ public class RenamedFile {
 		this.beforeFullPath = beforeFullPath;
 		this.afterFullPath = afterFullPath;
 	}
+
+	public RenamedFile() {
+		// TODO Auto-generated constructor stub
+	}
 };

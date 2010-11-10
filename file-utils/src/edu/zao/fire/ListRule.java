@@ -10,18 +10,18 @@ public class ListRule implements RenamerRule {
 	 * A generated serial ID
 	 */
 	private static final long serialVersionUID = 5732001028450514775L;
-	private boolean isAscending = false;
-	private boolean isAddToEnd = false;
-	private String seperatorToken = "";
-	private int startFrom = 0;
+	private boolean isAscending = true;
+	private boolean isAddToEnd = true;
+	private String seperatorToken = "-";
+	private int startFrom = 1;
 	private int counter = 0;
 
 	public static enum ListStyle {
 		NONE, NUMERIC, ALPHABETICAL, ROMAN_NUMERALS
 	}
 
-	private ListStyle listStyleState = ListStyle.NONE;
-	private int digitsDisplayed = 0;
+	private ListStyle listStyleState = ListStyle.NUMERIC;
+	private int digitsDisplayed = 1;
 
 	@Override
 	// TODO: Need a decimal to Roman numeral converter
@@ -31,18 +31,23 @@ public class ListRule implements RenamerRule {
 		String oldName = file.getName();
 		String newName = "";
 		switch (listStyleState) {
+		case NONE:
+			return "";
 		case NUMERIC:
 			numeral = getNumeric();
+			break;
 		case ALPHABETICAL:
 			numeral = getAlphabetical();
+			break;
 		case ROMAN_NUMERALS:
 			numeral = getRoman();
+			break;
 		}
 
 		if (isAddToEnd)
-			newName = numeral + numeral;
+			newName = oldName + seperatorToken + numeral;
 		else
-			newName = oldName + numeral;
+			newName = numeral + seperatorToken + oldName;
 
 		if (isAscending)
 			counter++;
@@ -53,12 +58,32 @@ public class ListRule implements RenamerRule {
 	}
 
 	private String getNumeric() {
-		return String.format("%0" + Integer.toString(digitsDisplayed) + "d", counter);
+		String output = "";
+		if (digitsDisplayed == 0) {
+			output = Integer.toString(counter);
+		} else {
+			String format = "%0" + Integer.toString(digitsDisplayed) + "d";
+			output = String.format(format, counter);
+		}
+		return output;
 	}
 
 	// http://stackoverflow.com/questions/342052/how-to-increment-a-java-string-through-all-the-possibilities
 	private String getAlphabetical() {
-		return "";
+		int num = counter;
+		if (num < 0) {
+			throw new IllegalArgumentException("Only positive numbers are supported");
+		}
+		StringBuilder s = new StringBuilder("");
+		for (int i = 0; i <= digitsDisplayed; i++) {
+			s.append("a");
+		}
+		for (int pos = digitsDisplayed; pos >= 0 && num > 0; pos--) {
+			char digit = (char) ('a' + num % 26);
+			s.setCharAt(pos, digit);
+			num = num / 26;
+		}
+		return s.toString();
 	}
 
 	private String getRoman() {
