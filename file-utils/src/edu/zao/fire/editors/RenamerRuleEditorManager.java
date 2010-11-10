@@ -86,6 +86,13 @@ public class RenamerRuleEditorManager {
 		}
 	}
 
+	/**
+	 * A variant of {@link #setActiveEditor}; it is called when an editor is
+	 * disposed. If that editor happened to be the current editor, the new
+	 * "activeEditor" is set to null, and any listeners are notified.
+	 * 
+	 * @param editor
+	 */
 	public void editorDisposed(RenamerRuleEditor editor) {
 		if (editor == activeEditor) {
 			activeEditor = null;
