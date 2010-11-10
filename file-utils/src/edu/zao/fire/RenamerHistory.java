@@ -12,6 +12,13 @@ import java.util.Stack;
 public class RenamerHistory {
 	private final Stack<RenamerEvent> undos = new Stack<RenamerEvent>();
 	private final Stack<RenamerEvent> redos = new Stack<RenamerEvent>();
+	private boolean canUndo = false;
+	private boolean canRedo = false;
+
+	private void updateStatus() {
+		canUndo = !undos.empty();
+		canRedo = !redos.empty();
+	}
 
 	/**
 	 * addRenamerEvent will push a new event onto the RenamerEvent stack, then
@@ -24,16 +31,20 @@ public class RenamerHistory {
 		if (!redos.empty())
 			redos.clear();
 		undos.push(newEvent);
+		updateStatus();
 	}
 
 	/**
 	 * Undo will undo the last renaming event and push it onto the redos stack
 	 */
 	public void undo() {
-		System.err.println("Attempting to undo\n");
-		RenamerEvent undoEvent = undos.pop();
-		undoEvent.undo();
-		redos.push(undoEvent);
+		if (canUndo) {
+			RenamerEvent undoEvent = undos.pop();
+			undoEvent.undo();
+			redos.push(undoEvent);
+		} else
+			System.err.println("Cannot undo.\n");
+		updateStatus();
 	}
 
 	/**
@@ -41,9 +52,20 @@ public class RenamerHistory {
 	 * stack
 	 */
 	public void redo() {
-		System.err.println("Attempting to redo\n");
-		RenamerEvent redoEvent = redos.pop();
-		redoEvent.redo();
-		undos.push(redoEvent);
+		if (canRedo) {
+			RenamerEvent redoEvent = redos.pop();
+			redoEvent.redo();
+			undos.push(redoEvent);
+		} else
+			System.err.println("Cannot redo.\n");
+		updateStatus();
+	}
+
+	public boolean isCanUndo() {
+		return canUndo;
+	}
+
+	public boolean isCanRedo() {
+		return canRedo;
 	}
 }

@@ -23,7 +23,6 @@ public class ListRule implements RenamerRule {
 	private int digitsDisplayed = 1;
 
 	@Override
-	// (http://www.roseindia.net/java/java-tips/45examples/misc/roman/roman.shtml)
 	public String getNewName(File file) throws IOException {
 		String numeral = "";
 		String oldName = file.getName();

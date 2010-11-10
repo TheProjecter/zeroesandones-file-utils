@@ -26,12 +26,22 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	private final RenamerHistory renamingHistory = new RenamerHistory();
 	private final List<File> localFiles = new ArrayList<File>();
 
+	public RenamerHistory getRenamerHistory() {
+		return renamingHistory;
+	}
+
 	public void undoRenamerEvent() {
 		renamingHistory.undo();
+		System.out.println("Undoing RenamerEvent\n");
+		setCurrentDirectory(currentDirectory);
+		rebuildNewNamesCache();
 	}
 
 	public void redoRenamerEvent() {
 		renamingHistory.redo();
+		System.out.println("Redoing RenamerEvent\n");
+		setCurrentDirectory(currentDirectory);
+		rebuildNewNamesCache();
 	}
 
 	/**
@@ -133,7 +143,6 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 			try {
 				String currentName = file.getName();
 				String newName = newNamesMap.get(currentName);
-
 				if (!currentName.equals(newName)) {
 					RenamedFile newRenamedFile = new RenamedFile();
 					String fullName = file.getCanonicalPath();

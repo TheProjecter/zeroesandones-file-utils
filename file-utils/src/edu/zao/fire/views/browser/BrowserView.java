@@ -138,9 +138,11 @@ public class BrowserView extends ViewPart {
 		// add undo/redo buttons
 		undoButton = new Button(bottomBarArea, SWT.PUSH);
 		undoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_UNDO));
+		undoButton.setEnabled(false);
 
 		redoButton = new Button(bottomBarArea, SWT.PUSH);
 		redoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_REDO));
+		redoButton.setEnabled(false);
 
 		applyButton = new Button(bottomBarArea, SWT.PUSH);
 		applyButton.setText("Apply Changes");
@@ -227,12 +229,16 @@ public class BrowserView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				renamer.undoRenamerEvent();
+				updateUndoButtonStatus();
+				browserTableViewer.refresh(true);
 			}
 		});
 		redoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				renamer.redoRenamerEvent();
+				updateUndoButtonStatus();
+				browserTableViewer.refresh(true);
 			}
 		});
 		// create the "Up one level" listener
@@ -347,6 +353,7 @@ public class BrowserView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				System.out.println("Clicked apply changes");
 				renamer.applyChanges();
+				updateUndoButtonStatus();
 				// browserTableViewer.setInput(renamer);
 			}
 		};
@@ -385,6 +392,13 @@ public class BrowserView extends ViewPart {
 		boolean canGoFront = urlHistory.canProgressHistory();
 		historyBackButton.setEnabled(canGoBack);
 		historyForwardButton.setEnabled(canGoFront);
+	}
+
+	private void updateUndoButtonStatus() {
+		boolean canUndo = renamer.getRenamerHistory().isCanUndo();
+		boolean canRedo = renamer.getRenamerHistory().isCanRedo();
+		undoButton.setEnabled(canUndo);
+		redoButton.setEnabled(canRedo);
 	}
 
 	@Override
