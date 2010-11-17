@@ -61,6 +61,10 @@ public class BrowserView extends ViewPart {
 
 	private Button redoButton;
 
+	private Button limitDisplayCheck;
+
+	private final BrowserTableContentProvider browserContentProvider = new BrowserTableContentProvider();
+
 	/**
 	 * Constructor. Initializes the internal renamer instance at the user's home
 	 * directory. This function should not be called by the client- the class is
@@ -158,7 +162,7 @@ public class BrowserView extends ViewPart {
 		applyButton
 				.setToolTipText("Apply the changes shown in the browser. All files shown will have their current names replaced with whatever is in the \"New Name\" column.");
 
-		Button limitDisplayCheck = new Button(bottomBarArea, SWT.CHECK);
+		limitDisplayCheck = new Button(bottomBarArea, SWT.CHECK);
 		limitDisplayCheck.setText("Only display changing items");
 		limitDisplayCheck
 				.setToolTipText("If checked, the browser will only show items whose names\n would be changed by applying the current renaming rule.");
@@ -181,7 +185,7 @@ public class BrowserView extends ViewPart {
 		// create the table viewer for the browser
 		browserTableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		browserTableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		browserTableViewer.setContentProvider(new BrowserTableContentProvider());
+		browserTableViewer.setContentProvider(browserContentProvider);
 
 		final BrowserTableItemSorter tableItemSorter = new BrowserTableItemSorter();
 		browserTableViewer.setSorter(tableItemSorter);
@@ -368,6 +372,19 @@ public class BrowserView extends ViewPart {
 			}
 		};
 		applyButton.addSelectionListener(applyChangesListener);
+
+		limitDisplayCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean isFilter = limitDisplayCheck.getSelection();
+				if (isFilter) {
+					browserContentProvider.addFilter(renamer.changingFileFilter);
+				} else {
+					browserContentProvider.removeFilter(renamer.changingFileFilter);
+				}
+				browserTableViewer.refresh(true);
+			}
+		});
 	}
 
 	/**
@@ -384,12 +401,8 @@ public class BrowserView extends ViewPart {
 			String url = location.getAbsolutePath();
 			currentURLText.setText(url);
 			currentURLText.setSelection(url.length());
-			// urlComboViewer.setSelection(selection);
-			// urlComboViewer.getCombo().setText(location.getAbsolutePath());
-			// urlComboViewer.refresh();
 
 			updateNavigationButtonStatus();
-
 		}
 	}
 

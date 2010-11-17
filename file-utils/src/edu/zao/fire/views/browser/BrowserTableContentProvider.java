@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import edu.zao.fire.Renamer;
+import edu.zao.fire.util.Filter;
 
 /**
  * Content Provider class that interprets the input to the Browser Table viewer
@@ -20,6 +21,7 @@ import edu.zao.fire.Renamer;
 public class BrowserTableContentProvider implements IStructuredContentProvider {
 
 	Renamer input;
+	private final List<Filter<File>> filters = new ArrayList<Filter<File>>();
 
 	/**
 	 * Returns an array of the files that are considered local to the renamer's
@@ -29,9 +31,28 @@ public class BrowserTableContentProvider implements IStructuredContentProvider {
 	public Object[] getElements(Object inputElement) {
 		List<File> elements = new ArrayList<File>();
 		for (File file : input.getLocalFiles()) {
-			elements.add(file);
+			if (filtersAccept(file)) {
+				elements.add(file);
+			}
 		}
 		return elements.toArray();
+	}
+
+	private boolean filtersAccept(File file) {
+		for (Filter<File> filter : filters) {
+			if (!filter.accept(file)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public void addFilter(Filter<File> filter) {
+		filters.add(filter);
+	}
+
+	public void removeFilter(Filter<File> filter) {
+		filters.remove(filter);
 	}
 
 	@Override

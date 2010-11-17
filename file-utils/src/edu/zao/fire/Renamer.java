@@ -11,6 +11,7 @@ import edu.zao.fire.editors.RenamerRuleChangeListener;
 import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
 import edu.zao.fire.util.FileGatherer;
+import edu.zao.fire.util.Filter;
 
 /**
  * Back end class that handles the actual changing of Files' names. It can be
@@ -49,6 +50,15 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	 * Maps original filenames to their new names; original value is the key
 	 */
 	private final Map<String, String> newNamesMap = new HashMap<String, String>();
+
+	public final Filter<File> changingFileFilter = new Filter<File>() {
+		@Override
+		public boolean accept(File file) {
+			String oldName = file.getName();
+			String newName = newNamesMap.get(oldName);
+			return oldName.compareTo(newName) != 0;
+		}
+	};
 
 	// ----------------------------------------------------------------
 	// Section for event handling and event listeners
