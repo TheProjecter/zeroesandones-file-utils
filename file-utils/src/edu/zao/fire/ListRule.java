@@ -36,6 +36,11 @@ public class ListRule implements RenamerRule {
 			oldName = fileName.substring(0, trim);
 		}
 
+		if (counter < 0) {
+			IOException e = new IOException("Less than zero lists are not allowed");
+			throw e;
+		}
+
 		switch (listStyleState) {
 		case NONE:
 			return "";
@@ -46,7 +51,12 @@ public class ListRule implements RenamerRule {
 			numeral = getAlphabetical();
 			break;
 		case ROMAN_NUMERALS:
-			numeral = getRoman();
+			try {
+				numeral = getRoman();
+			} catch (NumberFormatException e) {
+				IOException a = new IOException("Roman numeral lists must be greater than zero");
+				throw a;
+			}
 			break;
 		}
 

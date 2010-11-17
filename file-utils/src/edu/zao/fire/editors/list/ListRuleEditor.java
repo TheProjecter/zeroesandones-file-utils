@@ -172,7 +172,11 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		numDigitsSpinner.addModifyListener(numDigitsListener);
 		ModifyListener startFromModifiedListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				inputRule.setSeperatorToken(startFrom.getText());
+				if (startFrom.getText() == "") {
+					inputRule.setStartFrom(1);
+				} else {
+					inputRule.setStartFrom(Integer.parseInt(startFrom.getText()));
+				}
 				fireRuleChanged(inputRule);
 			}
 		};
