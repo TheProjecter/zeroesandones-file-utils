@@ -3,6 +3,10 @@ package edu.zao.fire.editors.matchreplace;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -24,6 +28,7 @@ import edu.zao.fire.MatchReplaceRule.CapitalizationStyle;
 import edu.zao.fire.MatchReplaceRule.ReplacementLimit;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.editors.RenamerRuleEditor;
+import edu.zao.fire.editors.matchreplace.regexassist.RegexContentProposalProvider;
 
 /**
  * User Interface for editing Match/Replace RenamerRules.
@@ -112,15 +117,28 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		Label matchLabel = new Label(matchReplaceArea, SWT.SINGLE);
 		matchLabel.setText("Match");
 		matchLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+		matchLabel.setToolTipText("The word, phrase, or pattern that you want to have replaced from within a file's name."
+				+ "\nYou can press Ctrl+Space to get content suggestions if you need help with Regular Expressions");
 
 		// set up the text box for the "Match" field
 		matchText = new Text(matchReplaceArea, SWT.SINGLE | SWT.BORDER);
 		matchText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
+		KeyStroke keyStroke = null;
+		try {
+			keyStroke = KeyStroke.getInstance("Ctrl+Space");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		ContentProposalAdapter urlProposalAdapter = new ContentProposalAdapter(matchText, new TextContentAdapter(),
+				new RegexContentProposalProvider(), keyStroke, null);
+
 		// set up the label for the "Replace" field
 		Label replaceLabel = new Label(matchReplaceArea, SWT.SINGLE);
 		replaceLabel.setText("Replace");
 		replaceLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+		replaceLabel.setToolTipText("Occurances of the Match Text within filenames will be replaced with whatever you enter here.");
 
 		// set up the text box for the "Replace" field
 		replaceText = new Text(matchReplaceArea, SWT.SINGLE | SWT.BORDER);
