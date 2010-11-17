@@ -25,8 +25,17 @@ public class ListRule implements RenamerRule {
 	@Override
 	public String getNewName(File file) throws IOException {
 		String numeral = "";
-		String oldName = file.getName();
+		String fileName = file.getName();
+		String postFix = "";
+		String oldName = fileName;
 		String newName = "";
+
+		int trim = fileName.lastIndexOf('.');
+		if (!file.isDirectory() && trim != -1) {
+			postFix = fileName.substring(trim);
+			oldName = fileName.substring(0, trim);
+		}
+
 		switch (listStyleState) {
 		case NONE:
 			return "";
@@ -51,7 +60,7 @@ public class ListRule implements RenamerRule {
 		else
 			counter--;
 
-		return newName;
+		return newName + postFix;
 	}
 
 	private String getNumeric() {
