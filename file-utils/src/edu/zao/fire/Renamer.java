@@ -280,6 +280,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 				newNamesMap.put(oldName, newName);
 			} catch (IOException e) {
 				fireEvent(EventType.IOException, file, currentRule);
+				newNamesMap.put(oldName, oldName);
 			}
 		}
 		if (currentRule != null) {
