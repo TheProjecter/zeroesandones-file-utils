@@ -1,5 +1,6 @@
 package edu.zao.fire.editors.metadata;
 
+import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -84,10 +85,19 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 		tagSelectionListViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Set<String> someTags = new TreeSet<String>();
-		for (char a = 'a'; a <= 'z'; a++) {
-			someTags.add(new String(new char[] {
-					a, a, a, a, a, a, a, a, a, a, a, a, a, a
-			}));
+		// for (char a = 'a'; a <= 'z'; a++) {
+		// someTags.add(new String(new char[] { a, a, a, a, a, a, a, a, a, a, a,
+		// a, a, a }));
+		// }
+
+		for (Field field : MetadataTagNames.class.getFields()) {
+			try {
+				String tagName = field.get(null).toString();
+				someTags.add(tagName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		tagSelectionListViewer.setContentProvider(new TagSelectionContentProvider());

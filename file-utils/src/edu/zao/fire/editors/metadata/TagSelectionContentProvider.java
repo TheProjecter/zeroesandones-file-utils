@@ -22,6 +22,9 @@ public class TagSelectionContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (newInput == null) {
+			return;
+		}
 		if (newInput instanceof Set<?>) {
 			input = (Set<?>) newInput;
 		} else {

@@ -36,20 +36,21 @@ public class MetadataTagList {
 		return tags.toArray();
 	}
 
-	public void createMetadataMap(File inputSong) throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+	public void createMetadataMap(File inputSong) throws CannotReadException, IOException, TagException, ReadOnlyFileException,
+			InvalidAudioFrameException {
 
 		final Map<String, String> metadataMap = new TreeMap<String, String>();
 
 		AudioFile song = AudioFileIO.read(inputSong);
 		Tag songTag = song.getTag();
 
-		metadataMap.put("Artist", getArtist(songTag));
-		metadataMap.put("Album", getAlbum(songTag));
-		metadataMap.put("Title", getTitle(songTag));
-		metadataMap.put("Track", getTrack(songTag));
-		metadataMap.put("Year", getYear(songTag));
-		metadataMap.put("Composer", getComposer(songTag));
-		metadataMap.put("Comment", getComment(songTag));
+		metadataMap.put(MetadataTagNames.ARTIST, getArtist(songTag));
+		metadataMap.put(MetadataTagNames.ALBUM, getAlbum(songTag));
+		metadataMap.put(MetadataTagNames.TITLE, getTitle(songTag));
+		metadataMap.put(MetadataTagNames.TRACK, getTrack(songTag));
+		metadataMap.put(MetadataTagNames.YEAR, getYear(songTag));
+		metadataMap.put(MetadataTagNames.COMPOSER, getComposer(songTag));
+		metadataMap.put(MetadataTagNames.COMMENT, getComment(songTag));
 
 	}
 

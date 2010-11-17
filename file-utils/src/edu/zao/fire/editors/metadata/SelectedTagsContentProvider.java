@@ -20,6 +20,9 @@ public class SelectedTagsContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (newInput == null) {
+			return;
+		}
 		if (newInput instanceof MetadataTagList) {
 			input = (MetadataTagList) newInput;
 		} else {
