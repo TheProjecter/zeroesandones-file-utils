@@ -92,17 +92,22 @@ public class BrowserView extends ViewPart {
 		// create the "Go Back" button
 		historyBackButton = new Button(toolbarTopArea, SWT.PUSH);
 		historyBackButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK));
+		historyBackButton.setToolTipText("Go to the previously visited location in the file browser");
 
 		// create the "Go Forward" button
 		historyForwardButton = new Button(toolbarTopArea, SWT.PUSH);
 		historyForwardButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD));
+		historyForwardButton.setToolTipText("Go forward in the history of visited locations");
 
 		// create the "Up One Level" button
 		browserUpLevelButton = new Button(toolbarTopArea, SWT.PUSH);
 		browserUpLevelButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_UP));
+		browserUpLevelButton.setToolTipText("Go up one level in the directory structure");
 
 		currentURLText = new Text(toolbarTopArea, SWT.SINGLE | SWT.BORDER);
 		currentURLText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		currentURLText
+				.setToolTipText("This area displays the current url. Type and press enter to change the URL. Pressing Ctrl+Space will open a list of previously visited locations that might complete whatever url has been typed.");
 
 		KeyStroke keyStroke = null;
 		try {
@@ -122,6 +127,7 @@ public class BrowserView extends ViewPart {
 		browseButton = new Button(toolbarTopArea, SWT.PUSH);
 		browseButton.setText("Browse...");
 		browseButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+		browseButton.setToolTipText("Browse to a new location");
 
 		// create the browser table viewer
 		createBrowserTableViewer(parent);
@@ -139,14 +145,18 @@ public class BrowserView extends ViewPart {
 		undoButton = new Button(bottomBarArea, SWT.PUSH);
 		undoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_UNDO));
 		undoButton.setEnabled(false);
+		undoButton.setToolTipText("Undo the last 'Apply Changes'");
 
 		redoButton = new Button(bottomBarArea, SWT.PUSH);
 		redoButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_REDO));
 		redoButton.setEnabled(false);
+		redoButton.setToolTipText("Redo the last 'Apply Changes'");
 
 		applyButton = new Button(bottomBarArea, SWT.PUSH);
 		applyButton.setText("Apply Changes");
 		applyButton.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, false));
+		applyButton
+				.setToolTipText("Apply the changes shown in the browser. All files shown will have their current names replaced with whatever is in the \"New Name\" column.");
 
 		Button limitDisplayCheck = new Button(bottomBarArea, SWT.CHECK);
 		limitDisplayCheck.setText("Only display changing items");
