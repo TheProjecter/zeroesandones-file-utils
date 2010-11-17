@@ -7,11 +7,14 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -27,6 +30,8 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 	public final static String ID = "file-utils.editors.metadata";
 
 	private MetadataRule rule;
+
+	private TableViewer addedTagListViewer;
 
 	public MetadataRuleEditor() {
 		// TODO Auto-generated constructor stub
@@ -123,20 +128,20 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 		new Label(parent, SWT.NONE);
 
 		// create a composite where the added tags would go
-		TableViewer addedTagListViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		addedTagListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData addedTagListViewerGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		addedTagListViewerGridData.verticalSpan = 3;
 		addedTagListViewer.getTable().setLayoutData(addedTagListViewerGridData);
 
 		MetadataTagList addedTags = new MetadataTagList();
-		addedTags.addTag("Artist");
-		addedTags.addTag("Plain Text: '-'");
-		addedTags.addTag("Track Number");
-		addedTags.addTag("Plain Text: '-'");
-		addedTags.addTag("Title");
+		addedTags.addTag(MetadataTag.ARTIST);
+		addedTags.addTag(MetadataTag.makePlainTextTag("-"));
+		addedTags.addTag(MetadataTag.TRACK);
+		addedTags.addTag(MetadataTag.makePlainTextTag("-"));
+		addedTags.addTag(MetadataTag.TITLE);
 
 		addedTagListViewer.setContentProvider(new SelectedTagsContentProvider());
-		addedTagListViewer.setLabelProvider(new TagSelectionLabelProvider());
+		addedTagListViewer.setLabelProvider(new SelectedTagsLabelProvider());
 		addedTagListViewer.setInput(addedTags);
 
 		// create up, down, and remove buttons
@@ -153,6 +158,20 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 		removeButton.setLayoutData(buttonGridData);
 		removeButton.setText("Remove");
 
+		addListeners();
+	}
+
+	private void addListeners() {
+		addedTagListViewer.getTable().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selections = addedTagListViewer.getTable().getSelection();
+				if (selections.length == 1) {
+					// int selectionIndex = addedTagListViewer.getTable().
+				}
+				System.out.println("selected " + addedTagListViewer.getTable().getSelection()[0]);
+			}
+		});
 	}
 
 	@Override

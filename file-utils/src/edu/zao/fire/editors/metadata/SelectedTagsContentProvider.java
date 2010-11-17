@@ -9,7 +9,7 @@ public class SelectedTagsContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		return input.getTags();
+		return input.getTagsArray();
 	}
 
 	@Override

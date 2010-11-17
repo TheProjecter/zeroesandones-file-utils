@@ -157,13 +157,14 @@
    </extension>
    <extension
          id="product"
+         name="FiRE Windows Release"
          point="org.eclipse.core.runtime.products">
       <product
             application="file-utils.application"
-            name="DeployTest">
+            name="FiRE Windows Release">
          <property
                name="appName"
-               value="DeployTest">
+               value="FiRE Windows Release">
          </property>
          <property
                name="windowImages"
