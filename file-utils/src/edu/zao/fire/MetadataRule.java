@@ -44,8 +44,6 @@ public class MetadataRule implements RenamerRule {
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return file.getName();
 		}
 
