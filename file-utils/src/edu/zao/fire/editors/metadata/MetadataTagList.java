@@ -1,8 +1,9 @@
 package edu.zao.fire.editors.metadata;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MetadataTagList {
+public class MetadataTagList implements Serializable {
 
 	// TODO: instead of holding strings, this should eventually be holding some
 	// kind of object that represents a metadata tag.
@@ -29,5 +30,31 @@ public class MetadataTagList {
 
 	public void addTag(MetadataTag tag) {
 		tags.add(tag);
+	}
+
+	public MetadataTag getTag(int index) {
+		return tags.get(index);
+	}
+
+	public void sendItemUp(int itemIndex) {
+		if (itemIndex <= 0) {
+			return;
+		}
+		MetadataTag temp = tags.get(itemIndex - 1);
+		tags.set(itemIndex - 1, tags.get(itemIndex));
+		tags.set(itemIndex, temp);
+	}
+
+	public void sendItemDown(int itemIndex) {
+		if (itemIndex >= tags.size() - 1) {
+			return;
+		}
+		MetadataTag temp = tags.get(itemIndex + 1);
+		tags.set(itemIndex + 1, tags.get(itemIndex));
+		tags.set(itemIndex, temp);
+	}
+
+	public void removeItem(int itemIndex) {
+		tags.remove(itemIndex);
 	}
 }

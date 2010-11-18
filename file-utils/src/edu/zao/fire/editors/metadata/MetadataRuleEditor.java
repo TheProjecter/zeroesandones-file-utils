@@ -4,9 +4,10 @@ import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -14,6 +15,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
@@ -33,6 +35,20 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 
 	private TableViewer addedTagListViewer;
 
+	private MetadataTagList tagList;
+
+	private Text plainTextBox;
+
+	private Button upButton;
+
+	private Button downButton;
+
+	private Button removeButton;
+
+	private TableViewer tagSelectionListViewer;
+
+	private Button addTagButton;
+
 	public MetadataRuleEditor() {
 		// TODO Auto-generated constructor stub
 	}
@@ -43,35 +59,12 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 	}
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void doSaveAs() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
 		rule = ((MetadataRuleEditorInput) input).getRule();
 		setPartName(input.getName());
-	}
-
-	@Override
-	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
-		return false;
+		tagList = rule.getTagList();
 	}
 
 	@Override
@@ -86,7 +79,7 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 		tagsLabel.setLayoutData(tagsLabelGridData);
 
 		// create a composite where the tag selection list would go
-		TableViewer tagSelectionListViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		tagSelectionListViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		tagSelectionListViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Set<String> someTags = new TreeSet<String>();
@@ -114,12 +107,12 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 		buttonGridData.widthHint = 64;
 
 		// create an "Add" button next to the tag selection list
-		Button addTagButton = new Button(parent, SWT.PUSH);
+		addTagButton = new Button(parent, SWT.PUSH);
 		addTagButton.setText("Add");
 		addTagButton.setLayoutData(buttonGridData);
 
 		// create a text box for editing Plain-Text tags
-		Text plainTextBox = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		plainTextBox = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		plainTextBox.setText("Edit plain-text tags here");
 		plainTextBox.setEnabled(false);
 		plainTextBox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -133,28 +126,27 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 		addedTagListViewerGridData.verticalSpan = 3;
 		addedTagListViewer.getTable().setLayoutData(addedTagListViewerGridData);
 
-		MetadataTagList addedTags = new MetadataTagList();
-		addedTags.addTag(MetadataTag.ARTIST);
-		addedTags.addTag(MetadataTag.makePlainTextTag("-"));
-		addedTags.addTag(MetadataTag.TRACK);
-		addedTags.addTag(MetadataTag.makePlainTextTag("-"));
-		addedTags.addTag(MetadataTag.TITLE);
+		// tagList.addTag(MetadataTag.ARTIST);
+		// tagList.addTag(MetadataTag.makePlainTextTag("-"));
+		// tagList.addTag(MetadataTag.TRACK);
+		// tagList.addTag(MetadataTag.makePlainTextTag("-"));
+		// tagList.addTag(MetadataTag.TITLE);
 
 		addedTagListViewer.setContentProvider(new SelectedTagsContentProvider());
 		addedTagListViewer.setLabelProvider(new SelectedTagsLabelProvider());
-		addedTagListViewer.setInput(addedTags);
+		addedTagListViewer.setInput(tagList);
 
 		// create up, down, and remove buttons
 
-		Button upButton = new Button(parent, SWT.PUSH);
+		upButton = new Button(parent, SWT.PUSH);
 		upButton.setLayoutData(buttonGridData);
 		upButton.setText("Up");
 
-		Button downButton = new Button(parent, SWT.PUSH);
+		downButton = new Button(parent, SWT.PUSH);
 		downButton.setLayoutData(buttonGridData);
 		downButton.setText("Down");
 
-		Button removeButton = new Button(parent, SWT.PUSH);
+		removeButton = new Button(parent, SWT.PUSH);
 		removeButton.setLayoutData(buttonGridData);
 		removeButton.setText("Remove");
 
@@ -162,16 +154,119 @@ public class MetadataRuleEditor extends RenamerRuleEditor {
 	}
 
 	private void addListeners() {
+		addTagButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Table table = tagSelectionListViewer.getTable();
+				for (TableItem item : table.getSelection()) {
+					String tagName = item.getText();
+					tagList.addTag(MetadataTagFactory.getTagInstance(tagName));
+				}
+				addedTagListViewer.refresh(true);
+				fireRuleChanged(rule);
+			}
+		});
+
 		addedTagListViewer.getTable().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TableItem[] selections =
+				// addedTagListViewer.getTable().getSelection();
+				// if (selections.length == 1) {
+				// int selectionIndex =
+				// addedTagListViewer.getTable().getSelectionIndex();
+				// MetadataTag tag = tagList.getTag(selectionIndex);
+				// if (tag.tagName == MetadataTagNames.PLAINTEXT) {
+				// plainTextBox.setEnabled(true);
+				// plainTextBox.setText(tag.getDefaultText());
+				// plainTextBox.setSelection(tag.getDefaultText().length());
+				// } else {
+				// plainTextBox.setEnabled(false);
+				// }
+				// }
+				updatePlainTextStatus();
+			}
+		});
+
+		plainTextBox.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!plainTextBox.isEnabled()) {
+					return;
+				}
+				TableItem[] selections = addedTagListViewer.getTable().getSelection();
+				if (selections.length == 1) {
+					int selectionIndex = addedTagListViewer.getTable().getSelectionIndex();
+					MetadataTag tag = tagList.getTag(selectionIndex);
+					tag.setDefaultText(plainTextBox.getText());
+					addedTagListViewer.refresh(true);
+					fireRuleChanged(rule);
+				}
+			}
+		});
+
+		upButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] selections = addedTagListViewer.getTable().getSelection();
 				if (selections.length == 1) {
-					// int selectionIndex = addedTagListViewer.getTable().
+					int selectionIndex = addedTagListViewer.getTable().getSelectionIndex();
+					MetadataTag tag = tagList.getTag(selectionIndex);
+					tagList.sendItemUp(selectionIndex);
+					addedTagListViewer.refresh(true);
+					addedTagListViewer.reveal(tag);
+					fireRuleChanged(rule);
 				}
-				System.out.println("selected " + addedTagListViewer.getTable().getSelection()[0]);
 			}
 		});
+
+		downButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selections = addedTagListViewer.getTable().getSelection();
+				if (selections.length == 1) {
+					int selectionIndex = addedTagListViewer.getTable().getSelectionIndex();
+					MetadataTag tag = tagList.getTag(selectionIndex);
+					tagList.sendItemDown(selectionIndex);
+					addedTagListViewer.refresh(true);
+					addedTagListViewer.reveal(tag);
+					fireRuleChanged(rule);
+				}
+			}
+		});
+
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem[] selections = addedTagListViewer.getTable().getSelection();
+				if (selections.length == 1) {
+					int selectionIndex = addedTagListViewer.getTable().getSelectionIndex();
+					MetadataTag tag = tagList.getTag(selectionIndex);
+					tagList.removeItem(selectionIndex);
+					addedTagListViewer.refresh(true);
+					addedTagListViewer.reveal(tag);
+				}
+				updatePlainTextStatus();
+				fireRuleChanged(rule);
+			}
+		});
+	}
+
+	private void updatePlainTextStatus() {
+		TableItem[] selections = addedTagListViewer.getTable().getSelection();
+		if (selections.length == 1) {
+			int selectionIndex = addedTagListViewer.getTable().getSelectionIndex();
+			MetadataTag tag = tagList.getTag(selectionIndex);
+			if (tag.tagName == MetadataTagNames.PLAINTEXT) {
+				plainTextBox.setText(tag.getDefaultText());
+				plainTextBox.setSelection(tag.getDefaultText().length());
+				plainTextBox.setEnabled(true);
+				return;
+			}
+		}
+		plainTextBox.setEnabled(false);
+		plainTextBox.setText("Edit plain-text tags here");
 	}
 
 	@Override

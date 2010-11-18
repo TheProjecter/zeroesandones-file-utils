@@ -1,8 +1,10 @@
 package edu.zao.fire.editors.metadata;
 
+import java.io.Serializable;
+
 import org.jaudiotagger.tag.FieldKey;
 
-public class MetadataTag {
+public class MetadataTag implements Serializable {
 	public final String tagName;
 	private String defaultText;
 	private final FieldKey fieldKeyForTag;
