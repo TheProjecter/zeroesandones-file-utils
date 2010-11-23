@@ -7,28 +7,26 @@ import org.jaudiotagger.tag.FieldKey;
 public class MetadataTag implements Serializable {
 	public final String tagName;
 	private String defaultText;
-	private final FieldKey fieldKeyForTag;
 
-	public final static MetadataTag ARTIST = new MetadataTag(MetadataTagNames.ARTIST, FieldKey.ARTIST, "Unknown Artist");
-	public final static MetadataTag ALBUM = new MetadataTag(MetadataTagNames.ALBUM, FieldKey.ALBUM, "Unknown Album");
-	public final static MetadataTag TITLE = new MetadataTag(MetadataTagNames.TITLE, FieldKey.TITLE, "Unknown Title");
-	public final static MetadataTag TRACK = new MetadataTag(MetadataTagNames.TRACK, FieldKey.TRACK, "Unknown Track");
-	public final static MetadataTag YEAR = new MetadataTag(MetadataTagNames.YEAR, FieldKey.YEAR, "Unknown Year");
-	public final static MetadataTag COMMENT = new MetadataTag(MetadataTagNames.COMMENT, FieldKey.COMMENT, "No Comment");
-	public final static MetadataTag COMPOSER = new MetadataTag(MetadataTagNames.COMPOSER, FieldKey.COMPOSER, "Unknown Composer");
+	public final static MetadataTag ARTIST = new MetadataTag(MetadataTagNames.ARTIST, "Unknown Artist");
+	public final static MetadataTag ALBUM = new MetadataTag(MetadataTagNames.ALBUM, "Unknown Album");
+	public final static MetadataTag TITLE = new MetadataTag(MetadataTagNames.TITLE, "Unknown Title");
+	public final static MetadataTag TRACK = new MetadataTag(MetadataTagNames.TRACK, "Unknown Track");
+	public final static MetadataTag YEAR = new MetadataTag(MetadataTagNames.YEAR, "Unknown Year");
+	public final static MetadataTag COMMENT = new MetadataTag(MetadataTagNames.COMMENT, "No Comment");
+	public final static MetadataTag COMPOSER = new MetadataTag(MetadataTagNames.COMPOSER, "Unknown Composer");
 
 	public static MetadataTag makePlainTextTag(String text) {
-		return new MetadataTag(MetadataTagNames.PLAINTEXT, null, text);
+		return new MetadataTag(MetadataTagNames.PLAINTEXT, text);
 	}
 
-	public MetadataTag(String tagName, FieldKey fieldKeyForTag, String defaultText) {
+	public MetadataTag(String tagName, String defaultText) {
 		this.tagName = tagName;
-		this.fieldKeyForTag = fieldKeyForTag;
 		this.defaultText = defaultText;
 	}
 
 	public FieldKey getFieldKey() {
-		return fieldKeyForTag;
+		return MetadataTagFactory.getFieldKey(tagName);
 	}
 
 	public String getDefaultText() {
