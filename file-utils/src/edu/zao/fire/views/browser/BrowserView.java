@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -33,6 +34,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.zao.fire.Renamer;
+import edu.zao.fire.Renamer.EventListener;
 import edu.zao.fire.Renamer.EventType;
 import edu.zao.fire.RenamerRule;
 import edu.zao.fire.views.browser.urlassist.URLContentProposalProvider;
@@ -385,6 +387,55 @@ public class BrowserView extends ViewPart {
 				browserTableViewer.refresh(true);
 			}
 		});
+
+		final ControlDecoration namingConflictNotification = new ControlDecoration(applyButton, SWT.RIGHT | SWT.TOP);
+		namingConflictNotification
+				.setDescriptionText("One or more files would have been renamed to the same thing. \nModify your inputs to avoid this happening again.");
+		namingConflictNotification.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+		namingConflictNotification.hide();
+
+		final ControlDecoration badRegexNotification = new ControlDecoration(applyButton, SWT.RIGHT | SWT.TOP);
+		badRegexNotification.setDescriptionText("The regular expression you entered is invalid. Please edit it and try again");
+		badRegexNotification.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+		badRegexNotification.hide();
+
+		final ControlDecoration ioExceptionNotification = new ControlDecoration(applyButton, SWT.RIGHT | SWT.TOP);
+		final String ioExceptionString = "An I/O Error occurred during renaming.";
+
+		ioExceptionNotification.setDescriptionText(ioExceptionString);
+		ioExceptionNotification.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_WARNING));
+		ioExceptionNotification.hide();
+
+		renamer.addEventListener(new EventListener() {
+
+			@Override
+			public void seeEvent(EventType eventType, File file, RenamerRule rule) {
+				switch (eventType) {
+				case BadRegex:
+					badRegexNotification.show();
+					applyButton.setEnabled(false);
+					break;
+				case IOException:
+					ioExceptionNotification.setDescriptionText(ioExceptionString);
+					ioExceptionNotification.show();
+					break;
+				case CouldNotRename:
+					ioExceptionNotification.setDescriptionText("Could not rename <" + file.getName() + ">");
+					ioExceptionNotification.show();
+					break;
+				case NameConflict:
+					namingConflictNotification.show();
+					applyButton.setEnabled(false);
+					break;
+				case RenamedWithNoProblems:
+					namingConflictNotification.hide();
+					ioExceptionNotification.hide();
+					badRegexNotification.hide();
+					applyButton.setEnabled(true);
+				}
+			}
+		});
+
 	}
 
 	/**

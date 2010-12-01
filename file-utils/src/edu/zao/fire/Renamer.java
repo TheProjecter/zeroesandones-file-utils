@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import edu.zao.fire.editors.RenamerRuleChangeListener;
 import edu.zao.fire.editors.RenamerRuleEditor;
@@ -69,7 +71,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	 * during the renaming process.
 	 */
 	public static enum EventType {
-		UpdatedNames, IOException, NameConflict
+		UpdatedNames, IOException, BadRegex, NameConflict, RenamedWithNoProblems, CouldNotRename
 		// TODO: add more when we find more event cases
 	}
 
@@ -147,7 +149,6 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	 * {@link EventListener}s should be notified.
 	 */
 	public void applyChanges() {
-		// TODO: add a naming conflict check
 		RenamerEvent newEvent = new RenamerEvent();
 		for (File file : localFiles) {
 			try {
@@ -163,7 +164,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 					newRenamedFile.setAfterPath(fullName);
 					boolean success = file.renameTo(newFile);
 					if (!success) {
-						System.err.println("Could not rename " + file);
+						fireEvent(EventType.CouldNotRename, file, currentRule);
 					}
 					newEvent.addRenamedFile(newRenamedFile);
 				}
@@ -172,6 +173,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 				fireEvent(EventType.IOException, file, currentRule);
 			}
 		}
+
 		renamingHistory.addRenamerEvent(newEvent);
 		setCurrentDirectory(currentDirectory);
 	}
@@ -269,6 +271,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	private void rebuildNewNamesCache() {
 		System.out.println("rebuilding names cache");
 		newNamesMap.clear();
+		boolean noProblem = true;
 
 		if (currentRule != null) {
 			currentRule.setup();
@@ -278,7 +281,11 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 			try {
 				String newName = (currentRule == null) ? oldName : currentRule.getNewName(file);
 				newNamesMap.put(oldName, newName);
+			} catch (UserRegexException e) {
+				noProblem = false;
+				fireEvent(EventType.BadRegex, file, currentRule);
 			} catch (IOException e) {
+				noProblem = false;
 				fireEvent(EventType.IOException, file, currentRule);
 				newNamesMap.put(oldName, oldName);
 			}
@@ -286,7 +293,25 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 		if (currentRule != null) {
 			currentRule.tearDown();
 		}
+
+		boolean gotNameConflict = false;
+		Set<String> newNames = new TreeSet<String>();
+		for (File file : localFiles) {
+			String currentName = file.getName();
+			String newName = newNamesMap.get(currentName);
+			if (newNames.contains(newName)) {
+				gotNameConflict = true;
+			}
+			newNames.add(newName);
+		}
+		if (gotNameConflict) {
+			noProblem = false;
+			fireEvent(EventType.NameConflict, null, currentRule);
+		}
 		fireEvent(EventType.UpdatedNames, null, currentRule);
+		if (noProblem) {
+			fireEvent(EventType.RenamedWithNoProblems, null, currentRule);
+		}
 	}
 
 	public String getNewName(File file) {
