@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="DeployTest" uid="fileutils.product" id="file-utils.linuxProduct" application="file-utils.application" version="0.0.1" useFeatures="false" includeLaunchers="true">
-
+<product name="FiRE Ubuntu Release" uid="fileutils.product" id="file-utils.linuxProduct" application="file-utils.application" version="0.8" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -25,7 +24,6 @@
             winLargeLow="/file-utils/icons/flame-48.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OSGi%Minimum-1.0</windows>
