@@ -122,7 +122,7 @@ public class MatchReplaceRule implements RenamerRule {
 				gotFirstLetter = true;
 			} else {
 				sb.append(Character.toLowerCase(c));
-				System.out.print(sb.toString() + " -> ");
+				// System.out.print(sb.toString() + " -> ");
 			}
 		}
 		return sb.toString();
