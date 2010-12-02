@@ -387,6 +387,9 @@ public class BrowserView extends ViewPart {
 				browserTableViewer.refresh(true);
 			}
 		});
+		final ControlDecoration lessThanZeroListNotification = new ControlDecoration(applyButton, SWT.RIGHT | SWT.TOP);
+		lessThanZeroListNotification.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+		lessThanZeroListNotification.hide();
 
 		final ControlDecoration namingConflictNotification = new ControlDecoration(applyButton, SWT.RIGHT | SWT.TOP);
 		namingConflictNotification
@@ -431,7 +434,20 @@ public class BrowserView extends ViewPart {
 					namingConflictNotification.hide();
 					ioExceptionNotification.hide();
 					badRegexNotification.hide();
+					lessThanZeroListNotification.hide();
 					applyButton.setEnabled(true);
+					break;
+				case LessThanOneRomanList:
+					lessThanZeroListNotification.setDescriptionText("Roman numeral lists less than one or greater than 4000 are not allowed."
+							+ "\nTry modifying the start from value, or switch ascending/descending style.");
+					lessThanZeroListNotification.show();
+					applyButton.setEnabled(false);
+					break;
+				case LessThanZeroList:
+					lessThanZeroListNotification
+							.setDescriptionText("Lists less than zero are not allowed.\nModify either the start from value or switch to ascending list.");
+					lessThanZeroListNotification.show();
+					applyButton.setEnabled(false);
 				}
 			}
 		});

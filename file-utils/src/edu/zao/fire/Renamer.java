@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import edu.zao.fire.ListRule.ListStyle;
 import edu.zao.fire.editors.RenamerRuleChangeListener;
 import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
@@ -71,7 +72,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	 * during the renaming process.
 	 */
 	public static enum EventType {
-		UpdatedNames, IOException, BadRegex, NameConflict, RenamedWithNoProblems, CouldNotRename
+		UpdatedNames, IOException, BadRegex, NameConflict, RenamedWithNoProblems, CouldNotRename, LessThanOneRomanList, LessThanZeroList
 		// TODO: add more when we find more event cases
 	}
 
@@ -284,6 +285,14 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 			} catch (UserRegexException e) {
 				noProblem = false;
 				fireEvent(EventType.BadRegex, file, currentRule);
+				return;
+			} catch (ListRuleException e) {
+				noProblem = false;
+				if (e.getListStyle() == ListStyle.ROMAN_NUMERALS)
+					fireEvent(EventType.LessThanOneRomanList, file, currentRule);
+				else
+					fireEvent(EventType.LessThanZeroList, file, currentRule);
+				return;
 			} catch (IOException e) {
 				noProblem = false;
 				fireEvent(EventType.IOException, file, currentRule);
@@ -294,6 +303,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 			currentRule.tearDown();
 		}
 
+		// Check for naming conflicts
 		boolean gotNameConflict = false;
 		Set<String> newNames = new TreeSet<String>();
 		for (File file : localFiles) {

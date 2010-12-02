@@ -23,7 +23,7 @@ public class ListRule implements RenamerRule {
 	private int digitsDisplayed = 1;
 
 	@Override
-	public String getNewName(File file) throws IOException {
+	public String getNewName(File file) throws ListRuleException {
 		String numeral = "";
 		String fileName = file.getName();
 		String postFix = "";
@@ -37,8 +37,9 @@ public class ListRule implements RenamerRule {
 		}
 
 		if (counter < 0) {
-			IOException e = new IOException("Less than zero lists are not allowed");
-			throw e;
+			IOException e = new IOException("Less than zero listrule");
+			ListRuleException a = new ListRuleException(e, listStyleState, counter);
+			throw a;
 		}
 
 		switch (listStyleState) {
@@ -54,7 +55,7 @@ public class ListRule implements RenamerRule {
 			try {
 				numeral = getRoman();
 			} catch (NumberFormatException e) {
-				IOException a = new IOException("Roman numeral lists must be greater than zero");
+				ListRuleException a = new ListRuleException(e, listStyleState, counter);
 				throw a;
 			}
 			break;
