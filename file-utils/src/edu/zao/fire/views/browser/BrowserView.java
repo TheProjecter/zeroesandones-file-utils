@@ -112,8 +112,9 @@ public class BrowserView extends ViewPart {
 
 		currentURLText = new Text(toolbarTopArea, SWT.SINGLE | SWT.BORDER);
 		currentURLText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		currentURLText
-				.setToolTipText("This area displays the current url. Type and press enter to change the URL. Pressing Ctrl+Space will open a list of previously visited locations that might complete whatever url has been typed.");
+		currentURLText.setToolTipText("This area displays the current url. Type and press enter to change\n"
+				+ "the URL. Pressing Ctrl+Space will open a list of previously visited\n"
+				+ "locations that might complete whatever url has been typed.");
 
 		KeyStroke keyStroke = null;
 		try {
