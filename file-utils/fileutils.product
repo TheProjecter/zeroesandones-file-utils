@@ -3,6 +3,16 @@
 
 <product name="FiRE Windows Release" uid="fileutils.product" id="file-utils.product" application="file-utils.application" version="0.8" useFeatures="false" includeLaunchers="true">
 
+   <aboutInfo>
+      <image path="/file-utils/icons/flame-128.png"/>
+      <text>
+         FiRE (or File Renaming Engine) is a UI-driven approach to file renaming. By creating Renamer Rules, users can apply them to many files at once, saving the time and effort of manually renaming each file.
+
+FiRE was originally created by Dylan Halperin, Chris O&apos;Neill, and James Savickas, aka Team &quot;Zeroes and Ones&quot;
+For more information about FiRE, visit http://code.google.com/p/zeroesandones-file-utils/
+      </text>
+   </aboutInfo>
+
    <configIni use="default">
    </configIni>
 
@@ -11,6 +21,7 @@
    </launcherArgs>
 
    <windowImages i16="/file-utils/icons/flame-16.png" i32="/file-utils/icons/flame-32.png" i48="/file-utils/icons/flame-48.png" i64="/file-utils/icons/flame-64.png" i128="/file-utils/icons/flame-128.png"/>
+
 
    <launcher name="FiRE">
       <solaris/>
@@ -24,6 +35,7 @@
             winLargeLow="/file-utils/icons/flame-48-8bit.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

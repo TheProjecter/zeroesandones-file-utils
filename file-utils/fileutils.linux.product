@@ -3,6 +3,16 @@
 
 <product name="FiRE Ubuntu Release" uid="fileutils.product" id="file-utils.linuxProduct" application="file-utils.application" version="0.8" useFeatures="false" includeLaunchers="true">
 
+   <aboutInfo>
+      <image path="/file-utils/icons/flame-128.png"/>
+      <text>
+         FiRE (or File Renaming Engine) is a UI-driven approach to file renaming. By creating Renamer Rules, users can apply them to many files at once, saving the time and effort of manually renaming each file.
+
+FiRE was originally created by Dylan Halperin, Chris O&apos;Neill, and James Savickas, aka Team &quot;Zeroes and Ones&quot;
+For more information about FiRE, visit http://code.google.com/p/zeroesandones-file-utils/
+      </text>
+   </aboutInfo>
+
    <configIni use="default">
    </configIni>
 
@@ -24,6 +34,7 @@
             winLargeLow="/file-utils/icons/flame-48.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OSGi%Minimum-1.0</windows>

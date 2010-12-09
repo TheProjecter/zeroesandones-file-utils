@@ -99,6 +99,16 @@
                   mnemonic="x">
             </command>
          </menu>
+         <menu
+               label="Help"
+               mnemonic="H">
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  label="About FiRE"
+                  mnemonic="A"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
@@ -169,6 +179,14 @@
          <property
                name="windowImages"
                value="icons/flame-16.png,icons/flame-32.png,icons/flame-48.png,icons/flame-64.png,icons/flame-128.png">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/flame-128.png">
+         </property>
+         <property
+               name="aboutText"
+               value="FiRE (or File Renaming Engine) is a UI-driven approach to file renaming. By creating Renamer Rules, users can apply them to many files at once, saving the time and effort of manually renaming each file.&#x0D;&#x0A;&#x0D;&#x0A;FiRE was originally created by Dylan Halperin, Chris O&apos;Neill, and James Savickas, aka Team &quot;Zeroes and Ones&quot;&#x0D;&#x0A;For more information about FiRE, visit http://code.google.com/p/zeroesandones-file-utils/">
          </property>
       </product>
    </extension>
