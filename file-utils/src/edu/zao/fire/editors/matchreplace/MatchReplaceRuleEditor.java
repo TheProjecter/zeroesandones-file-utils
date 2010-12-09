@@ -149,10 +149,10 @@ public class MatchReplaceRuleEditor extends RenamerRuleEditor {
 		matchCountComposite.setLayout(new GridLayout(1, false));
 
 		radioReplaceFirst = new Button(matchCountComposite, SWT.RADIO);
-		radioReplaceFirst.setText("Replace first occurance only");
+		radioReplaceFirst.setText("Replace first occurrence only");
 
 		radioReplaceAll = new Button(matchCountComposite, SWT.RADIO);
-		radioReplaceAll.setText("Replace all occurances");
+		radioReplaceAll.setText("Replace all occurrences");
 
 		caseSensitiveCheckBox = new Button(parent, SWT.CHECK);
 		caseSensitiveCheckBox.setText("Case sensitive");
