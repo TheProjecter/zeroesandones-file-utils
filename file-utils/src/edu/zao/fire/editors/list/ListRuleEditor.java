@@ -1,10 +1,16 @@
 package edu.zao.fire.editors.list;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -15,7 +21,9 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import edu.zao.fire.ListRule;
 import edu.zao.fire.ListRule.ListStyle;
@@ -163,6 +171,14 @@ public class ListRuleEditor extends RenamerRuleEditor {
 	}
 
 	private void addRuleModificationListeners() {
+		final ControlDecoration badSeperatorNotification = new ControlDecoration(seperatorToken, SWT.RIGHT | SWT.TOP);
+		badSeperatorNotification.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+		badSeperatorNotification.hide();
+		final ControlDecoration badStartFromNotification = new ControlDecoration(startFrom, SWT.RIGHT | SWT.TOP);
+		badStartFromNotification.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+		badStartFromNotification.hide();
+		badStartFromNotification.setDescriptionText("Start from must be numeric");
+
 		ModifyListener numDigitsListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				inputRule.setDigitsDisplayed(numDigitsSpinner.getSelection());
@@ -170,17 +186,41 @@ public class ListRuleEditor extends RenamerRuleEditor {
 			}
 		};
 		numDigitsSpinner.addModifyListener(numDigitsListener);
+		// TODO: Add support for starting from RomanNumeralValues or
+		// Alphabetical values
 		ModifyListener startFromModifiedListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (startFrom.getText() == "") {
-					inputRule.setStartFrom(1);
-				} else {
-					inputRule.setStartFrom(Integer.parseInt(startFrom.getText()));
+				boolean isGood = true;
+				try {
+					Integer.parseInt(startFrom.getText());
+				} catch (NumberFormatException f) {
+					isGood = false;
 				}
-				fireRuleChanged(inputRule);
+				if (isGood) {
+					badStartFromNotification.hide();
+					inputRule.setStartFrom(Integer.parseInt(startFrom.getText()));
+					fireRuleChanged(inputRule);
+				} else {
+					badStartFromNotification.show();
+				}
 			}
 		};
 		startFrom.addModifyListener(startFromModifiedListener);
+		VerifyListener seperatorTokenVerifyListener = new VerifyListener() {
+			@Override
+			public void verifyText(VerifyEvent e) {
+				List<Character> badChars = Arrays.asList('<', '>', ':', '\"', '/', '\\', '|', '?', '*');
+				if (badChars.contains(e.character)) {
+					badSeperatorNotification.setDescriptionText("The character \"" + e.character + "\" is not allowed");
+					badSeperatorNotification.show();
+					e.doit = false;
+				} else {
+					badSeperatorNotification.hide();
+				}
+			}
+		};
+		seperatorToken.addVerifyListener(seperatorTokenVerifyListener);
+
 		ModifyListener seperatorTokenModifiedListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				inputRule.setSeperatorToken(seperatorToken.getText());
