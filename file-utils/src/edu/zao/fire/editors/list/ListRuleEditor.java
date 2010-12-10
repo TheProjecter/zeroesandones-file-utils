@@ -68,7 +68,9 @@ public class ListRuleEditor extends RenamerRuleEditor {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout(1, false));
+		GridLayout parentLayout = new GridLayout(1, false);
+		parentLayout.marginRight = 5;
+		parent.setLayout(parentLayout);
 
 		// create the ascending/descending radio buttons
 		Composite topArea = new Composite(parent, SWT.NONE);
@@ -180,6 +182,7 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		badStartFromNotification.setDescriptionText("Start from must be numeric");
 
 		ModifyListener numDigitsListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				inputRule.setDigitsDisplayed(numDigitsSpinner.getSelection());
 				fireRuleChanged(inputRule);
@@ -189,6 +192,7 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		// TODO: Add support for starting from RomanNumeralValues or
 		// Alphabetical values
 		ModifyListener startFromModifiedListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				boolean isGood = true;
 				try {
@@ -222,6 +226,7 @@ public class ListRuleEditor extends RenamerRuleEditor {
 		seperatorToken.addVerifyListener(seperatorTokenVerifyListener);
 
 		ModifyListener seperatorTokenModifiedListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				inputRule.setSeperatorToken(seperatorToken.getText());
 				fireRuleChanged(inputRule);
