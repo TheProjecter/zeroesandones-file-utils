@@ -11,6 +11,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -193,7 +195,7 @@ public class BrowserView extends ViewPart {
 		final BrowserTableItemSorter tableItemSorter = new BrowserTableItemSorter();
 		browserTableViewer.setSorter(tableItemSorter);
 
-		String[] titles = { "Original Name", "New Name" };
+		String[] titles = { "Current Name", "Modified Name" };
 		int[] bounds = { 180, 180 };
 
 		for (int index = 0; index < titles.length; index++) {
@@ -202,6 +204,18 @@ public class BrowserView extends ViewPart {
 			column.getColumn().setWidth(bounds[index]);
 			column.getColumn().setResizable(true);
 		}
+
+		browserTableViewer.getTable().addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				int tableWidth = browserTableViewer.getTable().getClientArea().width;
+				int columnWidth = tableWidth / browserTableViewer.getTable().getColumnCount();
+				for (TableColumn column : browserTableViewer.getTable().getColumns()) {
+					column.setWidth(columnWidth);
+				}
+			}
+		});
+
 		browserTableViewer.setLabelProvider(new BrowserTableLabelProvider(renamer));
 
 		final Table table = browserTableViewer.getTable();

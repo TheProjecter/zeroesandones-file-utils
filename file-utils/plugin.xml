@@ -186,7 +186,7 @@
          </property>
          <property
                name="aboutText"
-               value="FiRE (or File Renaming Engine) is a UI-driven approach to file renaming. By creating Renamer Rules, users can apply them to many files at once, saving the time and effort of manually renaming each file.&#x0D;&#x0A;&#x0D;&#x0A;FiRE was originally created by Dylan Halperin, Chris O&apos;Neill, and James Savickas, aka Team &quot;Zeroes and Ones&quot;&#x0D;&#x0A;For more information about FiRE, visit http://code.google.com/p/zeroesandones-file-utils/">
+               value="FiRE (or File Renaming Engine) is a UI-driven approach to file renaming. By creating Renamer Rules, users can apply them to many files at once, saving the time and effort of manually renaming each file.&#x0A;&#x0A;FiRE was originally created by Dylan Halperin, Chris O&apos;Neill, and James Savickas, aka Team &quot;Zeroes and Ones&quot;&#x0A;For more information about FiRE, visit http://code.google.com/p/zeroesandones-file-utils/">
          </property>
       </product>
    </extension>
