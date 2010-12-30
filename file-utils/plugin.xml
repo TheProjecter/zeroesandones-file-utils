@@ -87,6 +87,21 @@
                   mnemonic="O"
                   style="push">
             </command>
+            <menu
+                  label="Open Recent..."
+                  mnemonic="R">
+               <dynamic
+                     class="edu.zao.fire.RecentRulesContribution"
+                     id="file-utils.dynamic2">
+               </dynamic>
+               <visibleWhen
+                     checkEnabled="false">
+                  <test
+                        property="edu.zao.fire.properties.haveRecentItems"
+                        value="true">
+                  </test>
+               </visibleWhen>
+            </menu>
             <command
                   commandId="file-utils.commands.saveCurrentEditor"
                   label="Save"
@@ -265,6 +280,15 @@
             id="file-utils.commands.browser.unIgnoreSelection"
             name="un-Ignore Selection">
       </command>
+      <command
+            id="edu.zao.fire.commands.loadRuleDirectly"
+            name="Load Rule Directly">
+         <commandParameter
+               id="fileName"
+               name="name"
+               optional="true">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -285,7 +309,7 @@
             commandId="file-utils.commands.saveCurrentEditor">
       </handler>
       <handler
-            class="edu.zao.fire.commands.LoadRuleCommandHandler"
+            class="edu.zao.fire.commands.LoadRuleFromDialogCommandHandler"
             commandId="file-utils.commands.openRule">
       </handler>
       <handler
@@ -295,6 +319,10 @@
       <handler
             class="edu.zao.fire.commands.UserSelectionUnIgnoreHandler"
             commandId="file-utils.commands.browser.unIgnoreSelection">
+      </handler>
+      <handler
+            class="edu.zao.fire.commands.LoadRuleCommandHandler"
+            commandId="edu.zao.fire.commands.loadRuleDirectly">
       </handler>
    </extension>
    <extension
@@ -313,6 +341,10 @@
       </image>
       <image
             commandId="file-utils.commands.openRule"
+            icon="IMG_OBJ_FOLDER">
+      </image>
+      <image
+            commandId="edu.zao.fire.commands.loadRuleDirectly"
             icon="IMG_OBJ_FOLDER">
       </image>
       <image
@@ -362,6 +394,16 @@
             schemeId="file-utils.binding.scheme"
             sequence="M1+3">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="edu.zao.fire.RecentFilesPropertyTester"
+            id="edu.zao.fire.propertytesters.haveRecentItems"
+            namespace="edu.zao.fire.properties"
+            properties="haveRecentItems"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>

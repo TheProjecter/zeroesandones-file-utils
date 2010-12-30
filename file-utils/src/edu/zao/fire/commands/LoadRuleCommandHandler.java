@@ -7,21 +7,22 @@ import java.io.ObjectInputStream;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import edu.zao.fire.ListRule;
 import edu.zao.fire.MatchReplaceRule;
 import edu.zao.fire.MetadataRule;
+import edu.zao.fire.RenamerRule;
+import edu.zao.fire.editors.RenamerRuleEditorInput;
 import edu.zao.fire.editors.list.ListRuleEditor;
 import edu.zao.fire.editors.list.ListRuleEditorInput;
 import edu.zao.fire.editors.matchreplace.MatchReplaceRuleEditor;
 import edu.zao.fire.editors.matchreplace.MatchReplaceRuleEditorInput;
 import edu.zao.fire.editors.metadata.MetadataRuleEditor;
 import edu.zao.fire.editors.metadata.MetadataRuleEditorInput;
+import edu.zao.fire.rcp.Activator;
 
 /**
  * The command that is executed when the
@@ -33,6 +34,10 @@ import edu.zao.fire.editors.metadata.MetadataRuleEditorInput;
  */
 public class LoadRuleCommandHandler extends AbstractHandler {
 
+	public final static String CommandID = "file-utils.commands.openRule";
+
+	public final static String fileNameKey = "fileName";
+
 	/**
 	 * Opens a file dialog and asks the user to select a ".frr" (file renamer
 	 * rule) file. If a file is selected, the UI will attempt to open the
@@ -40,59 +45,74 @@ public class LoadRuleCommandHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO: potential cleanup by splitting this function up
+		Object fileObject = event.getParameter(fileNameKey);
 
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		IWorkbenchPage page = window.getActivePage();
-		FileDialog fd = new FileDialog(window.getShell());
-		fd.setFilterExtensions(new String[] { "*.frr" });
-		fd.setText("Load Renaming Rule...");
-		String filename = fd.open();
+		IWorkbenchPage page = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage();
+
+		String filename = (String) fileObject;
+
+		openEditor(filename, page);
+
+		return null;
+	}
+
+	protected void openEditor(String filename, IWorkbenchPage page) throws ExecutionException {
 		if (filename != null) {
 			File ruleFile = new File(filename);
 			if (ruleFile.isFile()) {
-				Object rule;
+				Object object;
 				try {
 					ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ruleFile));
-					rule = ois.readObject();
+					object = ois.readObject();
 
 				} catch (Exception e) {
 					throw new ExecutionException("Failure to read file: " + ruleFile, e);
 				}
 
-				if (rule instanceof MatchReplaceRule) {
-					MatchReplaceRule mrRule = (MatchReplaceRule) rule;
-					MatchReplaceRuleEditorInput input = new MatchReplaceRuleEditorInput(mrRule, ruleFile);
-					try {
-						page.openEditor(input, MatchReplaceRuleEditor.ID);
-					} catch (PartInitException e) {
-						throw new ExecutionException("Could not open the Match/Replace Rule Editor", e);
-					}
+				if (!(object instanceof RenamerRule)) {
+					throw new ExecutionException("The object that was read was not a RenamerRule");
 				}
 
-				if (rule instanceof ListRule) {
-					ListRule lRule = (ListRule) rule;
-					ListRuleEditorInput input = new ListRuleEditorInput(lRule, ruleFile);
-					try {
-						page.openEditor(input, ListRuleEditor.ID);
-					} catch (PartInitException e) {
-						throw new ExecutionException("Could not open the List Rule Editor", e);
-					}
-				}
+				RenamerRule rule = (RenamerRule) object;
 
-				if (rule instanceof MetadataRule) {
-					MetadataRule mRule = (MetadataRule) rule;
-					MetadataRuleEditorInput input = new MetadataRuleEditorInput(mRule, ruleFile);
-					try {
-						page.openEditor(input, MetadataRuleEditor.ID);
-					} catch (PartInitException e) {
-						throw new ExecutionException("Could not open the Metadata Rule Editor", e);
-					}
+				// add the file to the recently loaded file set
+				Activator.getDefault().getRecentlyLoadedRules().add(ruleFile);
+
+				RenamerRuleEditorInput input = getEditorInput(rule, ruleFile);
+				String editorID = getEditorID(rule);
+
+				try {
+					page.openEditor(input, editorID);
+				} catch (PartInitException e) {
+					throw new ExecutionException("Failed to open editor.", e);
 				}
 			}
 		}
+	}
 
+	protected RenamerRuleEditorInput getEditorInput(RenamerRule rule, File file) {
+		if (rule instanceof MatchReplaceRule) {
+			return new MatchReplaceRuleEditorInput((MatchReplaceRule) rule, file);
+		}
+		if (rule instanceof ListRule) {
+			return new ListRuleEditorInput((ListRule) rule, file);
+		}
+		if (rule instanceof MetadataRule) {
+			return new MetadataRuleEditorInput((MetadataRule) rule, file);
+		}
 		return null;
 	}
 
+	protected String getEditorID(RenamerRule rule) {
+		if (rule instanceof MatchReplaceRule) {
+			return MatchReplaceRuleEditor.ID;
+		}
+		if (rule instanceof ListRule) {
+			return ListRuleEditor.ID;
+		}
+		if (rule instanceof MetadataRule) {
+			return MetadataRuleEditor.ID;
+		}
+		return null;
+	}
 }

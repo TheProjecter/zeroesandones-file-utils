@@ -1,5 +1,9 @@
 package edu.zao.fire.rcp;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -19,6 +23,8 @@ public class Activator extends AbstractUIPlugin {
 
 	private final RenamerRuleEditorManager editorManager = new RenamerRuleEditorManager();
 
+	private final Set<File> recentlyLoadedRules = new HashSet<File>();
+
 	/**
 	 * The constructor
 	 */
@@ -27,6 +33,10 @@ public class Activator extends AbstractUIPlugin {
 
 	public RenamerRuleEditorManager getEditorManager() {
 		return editorManager;
+	}
+
+	public Set<File> getRecentlyLoadedRules() {
+		return recentlyLoadedRules;
 	}
 
 	/*
