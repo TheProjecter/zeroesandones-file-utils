@@ -4,7 +4,11 @@ import java.io.File;
 
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -36,7 +40,22 @@ public class BrowserTableLabelProvider extends StyledCellLabelProvider {
 		Image cellImage = getCellImage(element, columnIndex);
 
 		cell.setText(cellText);
+
+		Color foregroundColor;
+		if (!getCellEnabled(element)) {
+			foregroundColor = Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		} else {
+			foregroundColor = Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+		}
+		StyleRange style = new StyleRange(0, cellText.length(), foregroundColor, null);
+		cell.setStyleRanges(new StyleRange[] { style });
+
 		cell.setImage(cellImage);
+	}
+
+	private boolean getCellEnabled(Object element) {
+		File file = (File) element;
+		return renamer.filtersAcceptFile(file);
 	}
 
 	/**

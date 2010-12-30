@@ -13,6 +13,8 @@ import edu.zao.fire.ListRule.ListStyle;
 import edu.zao.fire.editors.RenamerRuleChangeListener;
 import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
+import edu.zao.fire.filters.BrowserFileFilter;
+import edu.zao.fire.filters.BrowserFileFilter.FilterListener;
 import edu.zao.fire.util.FileGatherer;
 import edu.zao.fire.util.Filter;
 
@@ -24,29 +26,12 @@ import edu.zao.fire.util.Filter;
  * 
  * @author dylan
  */
-public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener {
+public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener, FilterListener {
 	private RenamerRule currentRule;
 	private File currentDirectory;
 	private final RenamerHistory renamingHistory = new RenamerHistory();
 	private final List<File> localFiles = new ArrayList<File>();
-
-	public RenamerHistory getRenamerHistory() {
-		return renamingHistory;
-	}
-
-	public void undoRenamerEvent() {
-		renamingHistory.undo();
-		System.out.println("Undoing RenamerEvent\n");
-		setCurrentDirectory(currentDirectory);
-		rebuildNewNamesCache();
-	}
-
-	public void redoRenamerEvent() {
-		renamingHistory.redo();
-		System.out.println("Redoing RenamerEvent\n");
-		setCurrentDirectory(currentDirectory);
-		rebuildNewNamesCache();
-	}
+	private final List<Filter<File>> fileFilters = new ArrayList<Filter<File>>();
 
 	/**
 	 * 
@@ -54,6 +39,11 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	 */
 	private final Map<String, String> newNamesMap = new HashMap<String, String>();
 
+	/**
+	 * File Filter used in conjunction with the "show only changing files"
+	 * button. This does not affect the state of the fileFilters list, and does
+	 * not affect whether any file will be renamed.
+	 */
 	public final Filter<File> changingFileFilter = new Filter<File>() {
 		@Override
 		public boolean accept(File file) {
@@ -144,6 +134,31 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	// End of event handling section
 	// ----------------------------------------------------------------
 
+	public void addFileFilter(BrowserFileFilter filter) {
+		fileFilters.add(filter);
+		filter.addFilterListener(this);
+	}
+
+	public void removeFileFilter(BrowserFileFilter filter) {
+		fileFilters.remove(filter);
+		filter.removeFilterListener(this);
+	}
+
+	public boolean filtersAcceptFile(File file) {
+		for (Filter<File> filter : fileFilters) {
+			if (!filter.accept(file)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void filterChanged(Filter<File> filter) {
+		System.out.println(filter + " just changed");
+		rebuildNewNamesCache();
+	}
+
 	/**
 	 * Apply the current renaming rule to all of the files in the current
 	 * directory. If any errors are encountered during this process, the
@@ -152,6 +167,9 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 	public void applyChanges() {
 		RenamerEvent newEvent = new RenamerEvent();
 		for (File file : localFiles) {
+			if (!filtersAcceptFile(file)) {
+				continue;
+			}
 			try {
 				String currentName = file.getName();
 				String newName = newNamesMap.get(currentName);
@@ -177,6 +195,24 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 
 		renamingHistory.addRenamerEvent(newEvent);
 		setCurrentDirectory(currentDirectory);
+	}
+
+	public RenamerHistory getRenamerHistory() {
+		return renamingHistory;
+	}
+
+	public void undoRenamerEvent() {
+		renamingHistory.undo();
+		System.out.println("Undoing RenamerEvent\n");
+		setCurrentDirectory(currentDirectory);
+		rebuildNewNamesCache();
+	}
+
+	public void redoRenamerEvent() {
+		renamingHistory.redo();
+		System.out.println("Redoing RenamerEvent\n");
+		setCurrentDirectory(currentDirectory);
+		rebuildNewNamesCache();
 	}
 
 	/**
@@ -279,6 +315,10 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener 
 		}
 		for (File file : localFiles) {
 			String oldName = file.getName();
+			if (!filtersAcceptFile(file)) {
+				newNamesMap.put(oldName, oldName);
+				continue;
+			}
 			try {
 				String newName = (currentRule == null) ? oldName : currentRule.getNewName(file);
 				newNamesMap.put(oldName, newName);

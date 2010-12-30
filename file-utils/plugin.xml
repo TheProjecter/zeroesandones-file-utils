@@ -148,6 +148,27 @@
             </command>
          </toolbar>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:file-utils.views.browser">
+         <command
+               commandId="file-utils.commands.browser.ignoreSelection"
+               label="Ignore Selection"
+               mnemonic="I"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+         <command
+               commandId="file-utils.commands.browser.unIgnoreSelection"
+               label="un-Ignore Selection"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          id="linuxProduct"
@@ -236,6 +257,14 @@
             id="file-utils.commands.openRule"
             name="Open Rule">
       </command>
+      <command
+            id="file-utils.commands.browser.ignoreSelection"
+            name="Ignore Selection">
+      </command>
+      <command
+            id="file-utils.commands.browser.unIgnoreSelection"
+            name="un-Ignore Selection">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -258,6 +287,14 @@
       <handler
             class="edu.zao.fire.commands.LoadRuleCommandHandler"
             commandId="file-utils.commands.openRule">
+      </handler>
+      <handler
+            class="edu.zao.fire.commands.UserSelectionIgnoreHandler"
+            commandId="file-utils.commands.browser.ignoreSelection">
+      </handler>
+      <handler
+            class="edu.zao.fire.commands.UserSelectionUnIgnoreHandler"
+            commandId="file-utils.commands.browser.unIgnoreSelection">
       </handler>
    </extension>
    <extension

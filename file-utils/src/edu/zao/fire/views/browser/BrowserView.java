@@ -2,6 +2,8 @@ package edu.zao.fire.views.browser;
 
 import java.io.File;
 
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -39,6 +42,7 @@ import edu.zao.fire.Renamer;
 import edu.zao.fire.Renamer.EventListener;
 import edu.zao.fire.Renamer.EventType;
 import edu.zao.fire.RenamerRule;
+import edu.zao.fire.filters.UserIgnoreFileFilter;
 import edu.zao.fire.views.browser.urlassist.URLContentProposalProvider;
 
 public class BrowserView extends ViewPart {
@@ -69,6 +73,8 @@ public class BrowserView extends ViewPart {
 
 	private final BrowserTableContentProvider browserContentProvider = new BrowserTableContentProvider();
 
+	private final UserIgnoreFileFilter userSelectionFileFilter = UserIgnoreFileFilter.getGlobalInstance();
+
 	/**
 	 * Constructor. Initializes the internal renamer instance at the user's home
 	 * directory. This function should not be called by the client- the class is
@@ -77,6 +83,7 @@ public class BrowserView extends ViewPart {
 	public BrowserView() {
 		String userHomePath = System.getProperty("user.home");
 		File userHome = new File(userHomePath);
+		renamer.addFileFilter(userSelectionFileFilter);
 		renamer.setCurrentDirectory(userHome);
 	}
 
@@ -232,7 +239,14 @@ public class BrowserView extends ViewPart {
 			}
 		});
 
-		browserTableViewer.getTable().setHeaderVisible(true);
+		table.setHeaderVisible(true);
+
+		MenuManager tableMenuManager = new MenuManager();
+		tableMenuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		table.setMenu(tableMenuManager.createContextMenu(table));
+
+		getSite().registerContextMenu(tableMenuManager, browserTableViewer);
+		getSite().setSelectionProvider(browserTableViewer);
 
 		browserTableViewer.setInput(renamer);
 
@@ -500,8 +514,8 @@ public class BrowserView extends ViewPart {
 	}
 
 	private void updateUndoButtonStatus() {
-		boolean canUndo = renamer.getRenamerHistory().isCanUndo();
-		boolean canRedo = renamer.getRenamerHistory().isCanRedo();
+		boolean canUndo = renamer.getRenamerHistory().canUndo();
+		boolean canRedo = renamer.getRenamerHistory().canRedo();
 		undoButton.setEnabled(canUndo);
 		redoButton.setEnabled(canRedo);
 	}

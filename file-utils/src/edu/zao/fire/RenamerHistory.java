@@ -61,11 +61,11 @@ public class RenamerHistory {
 		updateStatus();
 	}
 
-	public boolean isCanUndo() {
+	public boolean canUndo() {
 		return canUndo;
 	}
 
-	public boolean isCanRedo() {
+	public boolean canRedo() {
 		return canRedo;
 	}
 }
