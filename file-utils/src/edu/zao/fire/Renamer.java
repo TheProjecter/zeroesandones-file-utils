@@ -15,6 +15,8 @@ import edu.zao.fire.editors.RenamerRuleEditor;
 import edu.zao.fire.editors.RenamerRuleEditorManager.ActiveEditorListener;
 import edu.zao.fire.filters.BrowserFileFilter;
 import edu.zao.fire.filters.BrowserFileFilter.FilterListener;
+import edu.zao.fire.filters.UserFilters;
+import edu.zao.fire.filters.UserIgnoreFileFilter;
 import edu.zao.fire.util.FileGatherer;
 import edu.zao.fire.util.Filter;
 
@@ -32,7 +34,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener,
 	private final RenamerHistory renamingHistory = new RenamerHistory();
 	private final List<File> localFiles = new ArrayList<File>();
 	private final List<Filter<File>> fileFilters = new ArrayList<Filter<File>>();
-
+	private final UserFilters userFilters = new UserFilters();
 	/**
 	 * 
 	 * Maps original filenames to their new names; original value is the key
@@ -52,6 +54,12 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener,
 			return oldName.compareTo(newName) != 0;
 		}
 	};
+
+	private static Renamer defaultInstance = new Renamer();
+
+	public static Renamer getDefault() {
+		return defaultInstance;
+	}
 
 	// ----------------------------------------------------------------
 	// Section for event handling and event listeners
@@ -133,6 +141,15 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener,
 	// ----------------------------------------------------------------
 	// End of event handling section
 	// ----------------------------------------------------------------
+
+	public Renamer() {
+		userFilters.setIndividualFilter(new UserIgnoreFileFilter());
+		addFileFilter(userFilters);
+	}
+
+	public UserFilters getUserFilters() {
+		return userFilters;
+	}
 
 	public void addFileFilter(BrowserFileFilter filter) {
 		fileFilters.add(filter);
@@ -359,6 +376,7 @@ public class Renamer implements RenamerRuleChangeListener, ActiveEditorListener,
 			fireEvent(EventType.NameConflict, null, currentRule);
 		}
 		fireEvent(EventType.UpdatedNames, null, currentRule);
+		System.out.println("updated names...");
 		if (noProblem) {
 			fireEvent(EventType.RenamedWithNoProblems, null, currentRule);
 		}

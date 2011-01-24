@@ -47,7 +47,7 @@ import edu.zao.fire.views.browser.urlassist.URLContentProposalProvider;
 
 public class BrowserView extends ViewPart {
 
-	private final Renamer renamer = new Renamer();
+	private final Renamer renamer = Renamer.getDefault();
 
 	private final BrowserURLHistory urlHistory = new BrowserURLHistory();
 
@@ -73,7 +73,7 @@ public class BrowserView extends ViewPart {
 
 	private final BrowserTableContentProvider browserContentProvider = new BrowserTableContentProvider();
 
-	private final UserIgnoreFileFilter userSelectionFileFilter = UserIgnoreFileFilter.getGlobalInstance();
+	private final UserIgnoreFileFilter userSelectionFileFilter = renamer.getUserFilters().getIndividualFilter();
 
 	/**
 	 * Constructor. Initializes the internal renamer instance at the user's home
@@ -83,7 +83,6 @@ public class BrowserView extends ViewPart {
 	public BrowserView() {
 		String userHomePath = System.getProperty("user.home");
 		File userHome = new File(userHomePath);
-		renamer.addFileFilter(userSelectionFileFilter);
 		renamer.setCurrentDirectory(userHome);
 	}
 
@@ -256,7 +255,6 @@ public class BrowserView extends ViewPart {
 			@Override
 			public void seeEvent(EventType eventType, File file, RenamerRule rule) {
 				if (eventType == Renamer.EventType.UpdatedNames) {
-					System.out.println("refreshing browser");
 					browserTableViewer.refresh(true);
 				}
 			}

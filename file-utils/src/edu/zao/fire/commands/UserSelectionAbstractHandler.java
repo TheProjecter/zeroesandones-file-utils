@@ -10,6 +10,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import edu.zao.fire.Renamer;
 import edu.zao.fire.filters.UserIgnoreFileFilter;
 
 public abstract class UserSelectionAbstractHandler extends AbstractHandler {
@@ -53,6 +54,6 @@ public abstract class UserSelectionAbstractHandler extends AbstractHandler {
 	}
 
 	protected UserIgnoreFileFilter getFilter() {
-		return UserIgnoreFileFilter.getGlobalInstance();
+		return Renamer.getDefault().getUserFilters().getIndividualFilter();
 	}
 }

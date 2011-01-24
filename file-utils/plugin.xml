@@ -22,15 +22,17 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="edu.zao.fire.views.renamer.RenamerView"
-            id="file-utils.renamer.view"
-            name="Renaming View"
+            class="edu.zao.fire.views.browser.BrowserView"
+            id="file-utils.views.browser"
+            name="Browser"
             restorable="true">
       </view>
       <view
-            class="edu.zao.fire.views.browser.BrowserView"
-            id="file-utils.views.browser"
-            name="Browser View"
+            allowMultiple="false"
+            class="edu.zao.fire.views.filter.FilterView"
+            fastViewWidthRatio="0.382"
+            id="file-utils.views.filters"
+            name="Filters"
             restorable="true">
       </view>
    </extension>
@@ -47,8 +49,19 @@
                relationship="right"
                relative="org.eclipse.ui.editorss"
                showTitle="false"
-               standalone="true"
+               standalone="false"
                visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="file-utils.views.filters"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               relative="file-utils.views.browser"
+               showTitle="true"
+               standalone="false"
+               visible="false">
          </view>
       </perspectiveExtension>
    </extension>
@@ -122,6 +135,20 @@
                   label="About FiRE"
                   mnemonic="A"
                   style="push">
+            </command>
+         </menu>
+         <menu
+               label="Window"
+               mnemonic="W">
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="Show Filters"
+                  mnemonic="F"
+                  style="push">
+               <parameter
+                     name="org.eclipse.ui.views.showView.viewId"
+                     value="file-utils.views.filters">
+               </parameter>
             </command>
          </menu>
       </menuContribution>
@@ -288,6 +315,10 @@
                name="name"
                optional="true">
          </commandParameter>
+      </command>
+      <command
+            id="file-utils.commands.openFilters"
+            name="Open Filters">
       </command>
    </extension>
    <extension
