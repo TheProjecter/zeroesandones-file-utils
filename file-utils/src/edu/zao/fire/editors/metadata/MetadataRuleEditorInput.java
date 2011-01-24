@@ -31,7 +31,6 @@ public class MetadataRuleEditorInput extends RenamerRuleEditorInput {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

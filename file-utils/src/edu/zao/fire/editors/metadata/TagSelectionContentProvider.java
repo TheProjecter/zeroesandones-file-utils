@@ -16,8 +16,6 @@ public class TagSelectionContentProvider implements IStructuredContentProvider {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

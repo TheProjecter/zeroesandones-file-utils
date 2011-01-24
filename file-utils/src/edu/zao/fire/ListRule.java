@@ -219,8 +219,6 @@ public class ListRule implements RenamerRule {
 
 	@Override
 	public void tearDown() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

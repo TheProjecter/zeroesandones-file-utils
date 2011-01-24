@@ -35,7 +35,6 @@ public class MatchReplaceRuleEditorInput extends RenamerRuleEditorInput {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

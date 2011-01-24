@@ -117,16 +117,10 @@ public abstract class RenamerRuleEditor extends EditorPart {
 		try {
 			input.saveRuleToFile(getRule(), outFile);
 			String newTitle = outFile.getName();
-			// int frrIndex = newTitle.indexOf(".frr");
-			// if (frrIndex >= 0) {
-			// newTitle = newTitle.substring(0, frrIndex);
-			// }
 			setPartName(newTitle);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -136,7 +130,6 @@ public abstract class RenamerRuleEditor extends EditorPart {
 	@Override
 	public void doSaveAs() {
 		// do nothing, as this is not yet supported
-		// TODO: not sure if we should "Save as" or not...
 	}
 
 	/**

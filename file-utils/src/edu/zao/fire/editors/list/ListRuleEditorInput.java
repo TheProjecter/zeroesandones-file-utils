@@ -31,13 +31,11 @@ public class ListRuleEditorInput extends RenamerRuleEditorInput {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getToolTipText() {
-		// TODO Auto-generated method stub
 		return "";
 	}
 

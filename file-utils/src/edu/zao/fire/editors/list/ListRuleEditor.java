@@ -48,13 +48,8 @@ public class ListRuleEditor extends RenamerRuleEditor {
 	private Text seperatorToken;
 	private Spinner numDigitsSpinner;
 
-	public ListRuleEditor() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public RenamerRule getRule() {
-		// TODO Auto-generated method stub
 		return inputRule;
 	}
 
